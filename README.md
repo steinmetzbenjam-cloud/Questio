@@ -80,7 +80,7 @@ référence :
 
 - `QUESTIONS` — 171 questions pour les adultes (personnages, lieux, objets,
   livres, nombres), quatre indices ;
-- `QUESTIONS_ENFANTS` — 44 questions pour les 5-10 ans, trois indices simples.
+- `QUESTIONS_ENFANTS` — 77 questions pour les 5-10 ans, trois indices simples.
   Leurs identifiants commencent par `e-`.
 
 Pour en ajouter une, copier ce modèle dans la liste :
