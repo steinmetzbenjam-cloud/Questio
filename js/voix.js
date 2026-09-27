@@ -34,10 +34,25 @@ const Sortie = (() => {
       principal = contexte.createGain();
       principal.gain.value = gain();
       principal.connect(contexte.destination);
+      garderEveille();
     } catch (e) {
       contexte = null;
     }
     return contexte;
+  }
+
+  /**
+   * Un son inaudible joue en continu : iOS ne met plus le moteur en pause
+   * entre deux phrases, et les boutons du téléphone règlent le son de Questio
+   * (et non la sonnerie) pendant toute la partie.
+   */
+  function garderEveille() {
+    const veille = contexte.createOscillator();
+    const muet = contexte.createGain();
+    veille.frequency.value = 30;
+    muet.gain.value = 0.0001;
+    veille.connect(muet).connect(contexte.destination);
+    veille.start();
   }
 
   /** Relance le moteur si iOS l'a mis en pause (appel, mise en veille…). */
@@ -46,6 +61,18 @@ const Sortie = (() => {
       const r = contexte.resume();
       if (r) r.catch(() => {});
     }
+  }
+
+  /**
+   * Relance le moteur et attend qu'il tourne vraiment (une demi-seconde au
+   * plus) : la relance n'est pas instantanée, il ne faut pas jouer trop tôt.
+   */
+  function pret() {
+    if (!contexte || contexte.state === 'running') return Promise.resolve();
+    return Promise.race([
+      Promise.resolve(contexte.resume()).catch(() => {}),
+      new Promise(r => setTimeout(r, 500))
+    ]);
   }
 
   function actif() {
@@ -66,8 +93,14 @@ const Sortie = (() => {
     if (document.visibilityState === 'visible') reveiller();
   });
 
+  // Seul un vrai toucher autorise à relancer un moteur mis en pause par iOS :
+  // on en profite à chaque fois (buzz, « Question suivante »…).
+  for (const evenement of ['pointerdown', 'touchend', 'keydown']) {
+    document.addEventListener(evenement, reveiller, { capture: true, passive: true });
+  }
+
   return {
-    preparer, reveiller, actif, regler,
+    preparer, reveiller, pret, actif, regler,
     niveau: () => niveau,
     contexte: () => contexte,
     entree: () => principal
@@ -113,29 +146,19 @@ const Voix = (() => {
 
   const synthese = 'speechSynthesis' in window ? window.speechSynthesis : null;
 
-  // Deux lecteurs : l'un passe par le moteur audio (volume réglable), l'autre
-  // sert de secours si le moteur est en pause, pour ne jamais rester muet.
-  const lecteurRegle = new Audio();
-  const lecteurLibre = new Audio();
-  lecteurRegle.preload = lecteurLibre.preload = 'auto';
+  // Un seul lecteur, branché sur le moteur audio : c'est lui qui porte le
+  // volume réglable de Questio.
+  const lecteur = new Audio();
+  lecteur.preload = 'auto';
   let lecteurBranche = false;
-  let lecteur = lecteurLibre;
 
   function brancherLecteur() {
     const ctx = Sortie.preparer();
     if (!ctx || lecteurBranche) return;
     try {
-      ctx.createMediaElementSource(lecteurRegle).connect(Sortie.entree());
+      ctx.createMediaElementSource(lecteur).connect(Sortie.entree());
       lecteurBranche = true;
-    } catch (e) { /* le lecteur libre fera l'affaire */ }
-  }
-
-  function choisirLecteur() {
-    Sortie.reveiller();
-    lecteur = lecteurBranche && Sortie.actif() ? lecteurRegle : lecteurLibre;
-    // Hors iPhone, le lecteur de secours accepte un volume direct.
-    try { lecteurLibre.volume = Sortie.niveau() * Sortie.niveau(); } catch (e) { /* ignoré sur iOS */ }
-    return lecteur;
+    } catch (e) { /* sans moteur audio, le lecteur joue directement */ }
   }
   let voixChoisie = null;
   let preference = null;   // identifiant de la voix choisie par l'utilisateur
@@ -236,13 +259,11 @@ const Voix = (() => {
   function debloquer() {
     brancherLecteur();
     Sortie.reveiller();
-    for (const l of [lecteurRegle, lecteurLibre]) {
-      try {
-        l.src = adresseSilence();
-        const essai = l.play();
-        if (essai) essai.catch(() => {});
-      } catch (e) { /* pas de lecteur audio */ }
-    }
+    try {
+      lecteur.src = adresseSilence();
+      const essai = lecteur.play();
+      if (essai) essai.catch(() => {});
+    } catch (e) { /* pas de lecteur audio */ }
     // Avec la voix enregistrée, on ne réveille pas la voix du téléphone :
     // pendant qu'elle parle, même un silence, iOS baisse le son des autres
     // lectures, et Audrey démarrait trop bas.
@@ -307,13 +328,16 @@ const Voix = (() => {
         Enregistrements.adresse(reglages.enregistrement).then(adresse => {
           if (fini) return;
           if (!adresse) { parler(); return; } // enregistrement absent : la voix du téléphone
-          choisirLecteur();
-          lecteur.onended = () => conclure(true);
-          lecteur.onerror = () => parler();
-          lecteur.src = adresse;
-          lecteur.playbackRate = vitesse;
-          const lecture = lecteur.play();
-          if (lecture) lecture.catch(() => parler());
+          // Le moteur doit tourner avant de jouer, sinon la phrase serait muette.
+          Sortie.pret().then(() => {
+            if (fini) return;
+            lecteur.onended = () => conclure(true);
+            lecteur.onerror = () => parler();
+            lecteur.src = adresse;
+            lecteur.playbackRate = vitesse;
+            const lecture = lecteur.play();
+            if (lecture) lecture.catch(() => parler());
+          });
         });
         return;
       }
@@ -325,10 +349,8 @@ const Voix = (() => {
   /** Coupe net la lecture en cours. */
   function taire() {
     clearTimeout(minuterie);
-    for (const l of [lecteurRegle, lecteurLibre]) {
-      l.onended = l.onerror = null;
-      try { l.pause(); } catch (e) { /* rien à couper */ }
-    }
+    lecteur.onended = lecteur.onerror = null;
+    try { lecteur.pause(); } catch (e) { /* rien à couper */ }
     if (synthese) synthese.cancel();
     if (enCours) enCours(false);
   }
