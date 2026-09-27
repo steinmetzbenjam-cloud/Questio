@@ -304,7 +304,7 @@ const QUESTIONS = [
       'J’ai fini par prêcher à Ninive. Qui suis-je ?'
     ] },
 
-  { id: 'jean-baptiste', theme: 'Personnage', reponse: 'Jean-Baptiste', accepte: ['jean baptiste', 'jean le baptiseur', 'jean'],
+  { id: 'jean-baptiste', theme: 'Personnage', reponse: 'Jean-Baptiste', accepte: ['jean baptiste', 'jean le baptiseur'],
     reference: 'Luc 1:5, 13 ; Matthieu 3:4, 13-16',
     indices: [
       'Mon père, Zacharie, était prêtre.',
@@ -652,7 +652,566 @@ const QUESTIONS = [
       'C’est le nombre des compagnons de Daniel jetés dans la fournaise.',
       'Pierre a renié Jésus ce nombre de fois.',
       'Jonas est resté ce nombre de jours dans le poisson. Quel est ce nombre ?'
+    ] },
+  /* ----------------------------------------------- personnages (suite) --- */
+
+  { id: 'abel', theme: 'Personnage', reponse: 'Abel', accepte: [],
+    reference: 'Genèse 4:2-8 ; Hébreux 11:4',
+    indices: [
+      'Bien que mort, je parle encore, dit la lettre aux Hébreux.',
+      'J’étais berger.',
+      'J’ai offert à Jéhovah les premiers-nés de mon troupeau.',
+      'Mon frère Caïn m’a tué par jalousie. Qui suis-je ?'
+    ] },
+
+  { id: 'henok', theme: 'Personnage', reponse: 'Hénok', accepte: ['henoch', 'enoch', 'enoc'],
+    reference: 'Genèse 5:21-24 ; Jude 1:14',
+    indices: [
+      'Je suis de la septième génération depuis Adam.',
+      'J’ai prophétisé contre les impies.',
+      'J’ai marché avec le vrai Dieu.',
+      'Dieu m’a pris, et l’on ne m’a plus revu. Je suis le père de Mathusalem. Qui suis-je ?'
+    ] },
+
+  { id: 'loth', theme: 'Personnage', reponse: 'Loth', accepte: ['lot'],
+    reference: 'Genèse 12:5 ; 13:10-12 ; 19:15-26',
+    indices: [
+      'J’étais le neveu d’Abraham.',
+      'J’ai choisi de m’installer dans la plaine, près de Sodome.',
+      'Des anges m’ont pressé de fuir la ville avant sa destruction.',
+      'Ma femme a regardé en arrière et est devenue une colonne de sel. Qui suis-je ?'
+    ] },
+
+  { id: 'sara', theme: 'Personnage', reponse: 'Sara', accepte: ['sarai', 'sarah'],
+    reference: 'Genèse 12:15 ; 18:12 ; 20:12 ; 21:2-5',
+    indices: [
+      'J’étais la demi-sœur de mon mari.',
+      'Pharaon m’a fait conduire dans sa maison, me croyant libre.',
+      'J’ai ri en entendant que j’aurais un fils dans ma vieillesse.',
+      'À 90 ans, j’ai donné naissance à Isaac. Qui suis-je ?'
+    ] },
+
+  { id: 'esau', theme: 'Personnage', reponse: 'Ésaü', accepte: ['edom'],
+    reference: 'Genèse 25:25-34 ; 27:30-38',
+    indices: [
+      'À ma naissance, j’étais roux et velu.',
+      'Je suis devenu un habile chasseur.',
+      'J’ai vendu mon droit d’aînesse pour un plat de lentilles.',
+      'Mon frère jumeau Jacob a reçu à ma place la bénédiction de notre père. Qui suis-je ?'
+    ] },
+
+  { id: 'rachel', theme: 'Personnage', reponse: 'Rachel', accepte: [],
+    reference: 'Genèse 29:9, 20 ; 31:19 ; 35:16-19',
+    indices: [
+      'J’étais bergère et je gardais les moutons de mon père Laban.',
+      'Un homme a travaillé sept ans pour m’épouser, et ces années lui ont semblé quelques jours.',
+      'J’ai volé les théraphim de mon père.',
+      'Je suis morte en donnant naissance à Benjamin. Qui suis-je ?'
+    ] },
+
+  { id: 'aaron', theme: 'Personnage', reponse: 'Aaron', accepte: [],
+    reference: 'Exode 4:14-16 ; 7:7 ; 28:1 ; 32:4',
+    indices: [
+      'J’avais trois ans de plus que mon frère.',
+      'J’ai été le porte-parole de mon frère devant Pharaon.',
+      'J’ai fabriqué le veau d’or.',
+      'Frère de Moïse, je suis devenu le premier grand prêtre d’Israël. Qui suis-je ?'
+    ] },
+
+  { id: 'miriam', theme: 'Personnage', reponse: 'Miriam', accepte: ['myriam'],
+    reference: 'Exode 2:4 ; 15:20, 21 ; Nombres 12:1-10',
+    indices: [
+      'Enfant, j’ai surveillé mon petit frère caché dans un panier sur le Nil.',
+      'Après la traversée de la mer Rouge, j’ai chanté avec un tambourin.',
+      'J’ai été frappée de lèpre pour avoir critiqué mon frère.',
+      'Prophétesse, je suis la sœur de Moïse et d’Aaron. Qui suis-je ?'
+    ] },
+
+  { id: 'caleb', theme: 'Personnage', reponse: 'Caleb', accepte: [],
+    reference: 'Nombres 13:6, 30 ; 14:6-9 ; Josué 14:10-14',
+    indices: [
+      'J’étais de la tribu de Juda.',
+      'J’ai été l’un des douze espions envoyés en Canaan.',
+      'Avec Josué, j’ai été le seul à rapporter un bon rapport.',
+      'À 85 ans, j’étais aussi fort qu’à 40, et j’ai reçu Hébron en héritage. Qui suis-je ?'
+    ] },
+
+  { id: 'balaam', theme: 'Personnage', reponse: 'Balaam', accepte: [],
+    reference: 'Nombres 22:5, 6, 21-35 ; 23:11, 12',
+    indices: [
+      'Le roi de Moab, Balak, m’a fait venir.',
+      'On m’a promis une récompense pour maudire Israël.',
+      'Jéhovah a mis des bénédictions dans ma bouche au lieu de malédictions.',
+      'Mon ânesse a vu un ange avant moi, puis elle m’a parlé. Qui suis-je ?'
+    ] },
+
+  { id: 'jephte', theme: 'Personnage', reponse: 'Jephté', accepte: [],
+    reference: 'Juges 11:1-3, 30-35',
+    indices: [
+      'Mes demi-frères m’ont chassé de la maison familiale.',
+      'Les anciens de Galaad sont venus me chercher pour combattre les Ammonites.',
+      'Avant la bataille, j’ai fait un vœu à Jéhovah.',
+      'À mon retour, ma fille unique est venue à ma rencontre avec des tambourins. Qui suis-je ?'
+    ] },
+
+  { id: 'boaz', theme: 'Personnage', reponse: 'Boaz', accepte: ['booz'],
+    reference: 'Ruth 2:1-16 ; 4:9-13',
+    indices: [
+      'J’étais un riche propriétaire de Bethléem.',
+      'J’ai laissé une étrangère glaner dans mon champ, et même au milieu des gerbes.',
+      'J’ai agi comme racheteur pour la famille d’Élimélek.',
+      'J’ai épousé Ruth la Moabite. Qui suis-je ?'
+    ] },
+
+  { id: 'eli', theme: 'Personnage', reponse: 'Éli', accepte: [],
+    reference: '1 Samuel 1:9-14 ; 2:12 ; 4:17, 18',
+    indices: [
+      'Mes fils Hophni et Phinéas se conduisaient très mal.',
+      'J’étais grand prêtre à Silo.',
+      'J’ai cru qu’Anne, qui priait, était ivre.',
+      'Je suis tombé à la renverse en apprenant que l’Arche avait été prise. Qui suis-je ?'
+    ] },
+
+  { id: 'jonathan', theme: 'Personnage', reponse: 'Jonathan', accepte: [],
+    reference: '1 Samuel 14:1-14 ; 18:1-4',
+    indices: [
+      'Avec mon seul porteur d’armes, j’ai attaqué un poste philistin.',
+      'J’étais un fils du roi Saül.',
+      'J’ai donné mon manteau et mon épée à un jeune berger.',
+      'J’étais le meilleur ami de David. Qui suis-je ?'
+    ] },
+
+  { id: 'bath-sheba', theme: 'Personnage', reponse: 'Bath-Shéba', accepte: ['bath sheba', 'bethsabee', 'bethsheba'],
+    reference: '2 Samuel 11:2-4 ; 12:24 ; 1 Rois 1:11-17',
+    indices: [
+      'J’étais la femme d’Urie le Hittite.',
+      'Le roi m’a vue depuis la terrasse de son palais.',
+      'Le prophète Nathan a reproché au roi ce qu’il avait fait.',
+      'Je suis la mère du roi Salomon. Qui suis-je ?'
+    ] },
+
+  { id: 'nathan', theme: 'Personnage', reponse: 'Nathan', accepte: [],
+    reference: '2 Samuel 7:2-4 ; 12:1-7 ; 1 Rois 1:11-14',
+    indices: [
+      'J’étais prophète à la cour du roi David.',
+      'J’ai raconté au roi l’histoire d’un homme riche qui prend l’unique agnelle d’un pauvre.',
+      'Puis je lui ai dit : « C’est toi l’homme ! »',
+      'J’ai soutenu Salomon pour qu’il succède à David. Qui suis-je ?'
+    ] },
+
+  { id: 'jezabel', theme: 'Personnage', reponse: 'Jézabel', accepte: [],
+    reference: '1 Rois 16:31 ; 19:2 ; 21:5-16 ; 2 Rois 9:30-33',
+    indices: [
+      'J’étais la fille du roi de Sidon.',
+      'J’ai fait tuer Naboth pour prendre sa vigne.',
+      'J’ai menacé de mort le prophète Élie.',
+      'Jéhu m’a fait jeter par une fenêtre. Qui suis-je ?'
+    ] },
+
+  { id: 'naaman', theme: 'Personnage', reponse: 'Naamân', accepte: [],
+    reference: '2 Rois 5:1-14',
+    indices: [
+      'J’étais le chef de l’armée du roi de Syrie.',
+      'Une petite fille israélite captive a parlé d’un prophète capable de me guérir.',
+      'J’étais lépreux.',
+      'Je me suis plongé sept fois dans le Jourdain. Qui suis-je ?'
+    ] },
+
+  { id: 'ezechias', theme: 'Personnage', reponse: 'Ézéchias', accepte: [],
+    reference: '2 Rois 18:4, 13 ; 19:35 ; 20:6',
+    indices: [
+      'J’ai mis en pièces le serpent de cuivre fait par Moïse.',
+      'Sennachérib, roi d’Assyrie, a menacé Jérusalem pendant mon règne.',
+      'Un ange a frappé 185 000 soldats assyriens en une nuit.',
+      'Malade, j’ai prié, et Jéhovah a ajouté quinze ans à ma vie. Qui suis-je ?'
+    ] },
+
+  { id: 'josias', theme: 'Personnage', reponse: 'Josias', accepte: [],
+    reference: '2 Rois 22:1, 8 ; 23:4-23',
+    indices: [
+      'Je suis devenu roi de Juda à huit ans.',
+      'Pendant mon règne, on a retrouvé le livre de la Loi dans le temple.',
+      'J’ai détruit les autels et les idoles des faux dieux.',
+      'J’ai célébré une Pâque comme on n’en avait plus vu depuis l’époque des juges. Qui suis-je ?'
+    ] },
+
+  { id: 'jeremie', theme: 'Personnage', reponse: 'Jérémie', accepte: [],
+    reference: 'Jérémie 1:6 ; 36:4 ; 38:6',
+    indices: [
+      'Quand Dieu m’a appelé, j’ai dit que j’étais trop jeune.',
+      'Mon secrétaire s’appelait Baruch.',
+      'On m’a jeté dans une citerne pleine de boue.',
+      'J’ai annoncé pendant des années la destruction de Jérusalem par Babylone. Qui suis-je ?'
+    ] },
+
+  { id: 'ezechiel', theme: 'Personnage', reponse: 'Ézéchiel', accepte: [],
+    reference: 'Ézéchiel 1:3, 15-21 ; 3:17 ; 37:1-10',
+    indices: [
+      'J’étais prêtre, exilé à Babylone près du fleuve Kebar.',
+      'J’ai vu le char céleste de Jéhovah, avec ses roues.',
+      'Jéhovah m’a établi comme sentinelle pour Israël.',
+      'Dans une vision, j’ai vu une vallée d’ossements desséchés reprendre vie. Qui suis-je ?'
+    ] },
+
+  { id: 'esdras', theme: 'Personnage', reponse: 'Esdras', accepte: [],
+    reference: 'Esdras 7:6, 10 ; Néhémie 8:1-8',
+    indices: [
+      'J’étais prêtre.',
+      'J’étais un copiste habile dans la Loi de Moïse.',
+      'Je suis revenu de Babylone à Jérusalem avec des dons pour le temple.',
+      'Debout sur une estrade en bois, j’ai lu la Loi au peuple rassemblé. Qui suis-je ?'
+    ] },
+
+  { id: 'mardochee', theme: 'Personnage', reponse: 'Mardochée', accepte: [],
+    reference: 'Esther 2:5-7, 21-23 ; 3:2',
+    indices: [
+      'J’étais un Benjaminite exilé à Suse.',
+      'J’ai découvert un complot contre le roi.',
+      'J’ai refusé de me prosterner devant Haman.',
+      'J’ai élevé ma cousine Esther. Qui suis-je ?'
+    ] },
+
+  { id: 'haman', theme: 'Personnage', reponse: 'Haman', accepte: [],
+    reference: 'Esther 3:1-6 ; 7:10',
+    indices: [
+      'J’étais un Agaguite.',
+      'Le roi Assuérus m’a élevé au-dessus de tous les princes.',
+      'Furieux contre Mardochée, j’ai voulu exterminer tous les Juifs.',
+      'J’ai été pendu sur le poteau que j’avais préparé pour Mardochée. Qui suis-je ?'
+    ] },
+
+  { id: 'nicodeme', theme: 'Personnage', reponse: 'Nicodème', accepte: [],
+    reference: 'Jean 3:1-5 ; 19:39',
+    indices: [
+      'J’étais pharisien et chef des Juifs.',
+      'Je suis venu voir Jésus de nuit.',
+      'Jésus m’a expliqué qu’il fallait naître de nouveau.',
+      'Pour son enterrement, j’ai apporté de la myrrhe et de l’aloès. Qui suis-je ?'
+    ] },
+
+  { id: 'matthieu', theme: 'Personnage', reponse: 'Matthieu', accepte: ['levi'],
+    reference: 'Matthieu 9:9 ; Marc 2:14',
+    indices: [
+      'On m’appelait aussi Lévi.',
+      'J’étais collecteur d’impôts.',
+      'Jésus m’a dit « Suis-moi » alors que j’étais assis au bureau des impôts.',
+      'J’ai écrit le premier des quatre Évangiles. Qui suis-je ?'
+    ] },
+
+  { id: 'jean-apotre', theme: 'Personnage', reponse: 'Jean', accepte: ['jean l apotre', 'apotre jean'],
+    reference: 'Marc 3:17 ; Jean 21:20, 24 ; Révélation 1:1, 9',
+    indices: [
+      'Mon frère s’appelait Jacques et notre père Zébédée.',
+      'Jésus nous a surnommés « fils du tonnerre ».',
+      'On m’appelle « le disciple que Jésus aimait ».',
+      'J’ai écrit un Évangile, trois lettres et la Révélation. Qui suis-je ?'
+    ] },
+
+  { id: 'marie-magdala', theme: 'Personnage', reponse: 'Marie de Magdala', accepte: ['marie madeleine', 'madeleine', 'magdala'],
+    reference: 'Luc 8:1-3 ; Jean 19:25 ; 20:11-18',
+    indices: [
+      'Jésus m’a délivrée de sept démons.',
+      'Avec d’autres femmes, je servais Jésus et ses apôtres avec mes biens.',
+      'Je me tenais près du poteau où Jésus est mort.',
+      'Près du tombeau, j’ai été la première à voir Jésus ressuscité, sans d’abord le reconnaître. Qui suis-je ?'
+    ] },
+
+  { id: 'joseph-arimathie', theme: 'Personnage', reponse: 'Joseph d’Arimathie', accepte: ['joseph d arimathie', 'joseph d arimathee', 'arimathie'],
+    reference: 'Matthieu 27:57-60 ; Marc 15:43 ; Jean 19:38',
+    indices: [
+      'J’étais un homme riche et un membre respecté du Conseil.',
+      'J’étais disciple de Jésus, mais en secret.',
+      'J’ai eu le courage de demander à Pilate le corps de Jésus.',
+      'J’ai déposé Jésus dans ma tombe neuve, taillée dans le roc. Qui suis-je ?'
+    ] },
+
+  { id: 'pilate', theme: 'Personnage', reponse: 'Ponce Pilate', accepte: ['pilate'],
+    reference: 'Jean 18:38 ; Matthieu 27:24-26',
+    indices: [
+      'J’étais gouverneur romain de Judée.',
+      'J’ai demandé : « Qu’est-ce que la vérité ? »',
+      'Je me suis lavé les mains devant la foule.',
+      'J’ai livré Jésus pour qu’il soit exécuté. Qui suis-je ?'
+    ] },
+
+  { id: 'barabbas', theme: 'Personnage', reponse: 'Barabbas', accepte: ['barabas'],
+    reference: 'Luc 23:18, 19, 25 ; Matthieu 27:15-21',
+    indices: [
+      'J’étais en prison pour sédition et pour meurtre.',
+      'Chaque année à la fête, le gouverneur relâchait un prisonnier.',
+      'La foule a réclamé ma libération.',
+      'J’ai été relâché à la place de Jésus. Qui suis-je ?'
+    ] },
+
+  { id: 'corneille', theme: 'Personnage', reponse: 'Corneille', accepte: [],
+    reference: 'Actes 10:1-8, 44-48',
+    indices: [
+      'J’étais officier de l’armée romaine, à Césarée.',
+      'Je faisais beaucoup de dons et je priais Dieu sans cesse.',
+      'Un ange m’a dit de faire venir Pierre.',
+      'J’ai été le premier non-Juif incirconcis à devenir disciple de Jésus. Qui suis-je ?'
+    ] },
+
+  { id: 'tabitha', theme: 'Personnage', reponse: 'Tabitha', accepte: ['dorcas'],
+    reference: 'Actes 9:36-41',
+    indices: [
+      'J’habitais Joppé.',
+      'Je faisais beaucoup de bonnes actions et je cousais des vêtements pour les veuves.',
+      'Mon nom, traduit en grec, est Dorcas.',
+      'Pierre m’a ramenée à la vie. Qui suis-je ?'
+    ] },
+
+  { id: 'lydie', theme: 'Personnage', reponse: 'Lydie', accepte: [],
+    reference: 'Actes 16:14, 15, 40',
+    indices: [
+      'Je venais de la ville de Thyatire.',
+      'Je vendais de la pourpre.',
+      'À Philippes, j’ai écouté Paul au bord d’une rivière.',
+      'Après mon baptême, j’ai insisté pour que Paul et ses compagnons logent chez moi. Qui suis-je ?'
+    ] },
+
+  { id: 'silas', theme: 'Personnage', reponse: 'Silas', accepte: ['silvain'],
+    reference: 'Actes 15:32, 40 ; 16:25, 26',
+    indices: [
+      'J’étais prophète dans la congrégation de Jérusalem.',
+      'Paul m’a choisi comme compagnon de voyage après sa séparation d’avec Barnabé.',
+      'À Philippes, j’ai chanté des louanges à Dieu en prison, avec Paul.',
+      'Un tremblement de terre a ouvert les portes de notre prison. Qui suis-je ?'
+    ] },
+
+  { id: 'apollos', theme: 'Personnage', reponse: 'Apollos', accepte: [],
+    reference: 'Actes 18:24-28 ; 1 Corinthiens 1:12',
+    indices: [
+      'J’étais un Juif d’Alexandrie.',
+      'J’étais éloquent et je connaissais bien les Écritures.',
+      'Priscille et Aquila m’ont expliqué plus exactement le chemin de Dieu.',
+      'À Corinthe, certains disaient « Moi, je suis de Paul », d’autres se réclamaient de moi. Qui suis-je ?'
+    ] },
+
+  { id: 'priscille', theme: 'Personnage', reponse: 'Priscille', accepte: ['prisca'],
+    reference: 'Actes 18:2, 3, 26 ; Romains 16:3, 4',
+    indices: [
+      'Nous avons dû quitter Rome sur ordre de l’empereur Claude.',
+      'Mon mari et moi fabriquions des tentes, comme Paul.',
+      'Nous avons instruit Apollos plus exactement.',
+      'Mon mari s’appelait Aquila. Qui suis-je ?'
+    ] },
+
+  { id: 'eutyche', theme: 'Personnage', reponse: 'Eutyche', accepte: [],
+    reference: 'Actes 20:7-12',
+    indices: [
+      'J’étais un jeune homme de Troas.',
+      'Paul a parlé jusqu’à minuit, et j’étais assis à une fenêtre.',
+      'Je me suis endormi et je suis tombé du troisième étage.',
+      'Paul m’a ramené à la vie. Qui suis-je ?'
+    ] },
+
+  { id: 'onesime', theme: 'Personnage', reponse: 'Onésime', accepte: [],
+    reference: 'Philémon 1:10-16 ; Colossiens 4:9',
+    indices: [
+      'J’étais un esclave qui s’était enfui.',
+      'J’ai rencontré Paul pendant son emprisonnement, et je suis devenu chrétien.',
+      'Paul m’a renvoyé chez mon maître, avec une lettre.',
+      'Mon maître s’appelait Philémon. Qui suis-je ?'
+    ] },
+
+  /* ----------------------------------------------------- lieux (suite) --- */
+
+  { id: 'ur', theme: 'Lieu', reponse: 'Ur', accepte: ['ur des chaldeens'],
+    reference: 'Genèse 11:28-31 ; Actes 7:2-4',
+    indices: [
+      'Haran, le frère d’Abram, est mort chez moi.',
+      'Térah et sa famille m’ont quittée pour Harân.',
+      'Je suis une ville des Chaldéens.',
+      'Abraham a vécu chez moi avant son grand départ. Quelle ville suis-je ?'
+    ] },
+
+  { id: 'sodome', theme: 'Lieu', reponse: 'Sodome', accepte: [],
+    reference: 'Genèse 13:12 ; 18:32 ; 19:24',
+    indices: [
+      'J’étais une ville de la région du Jourdain.',
+      'Loth s’est installé près de moi, puis chez moi.',
+      'Abraham a demandé si je serais épargnée pour dix justes.',
+      'Jéhovah m’a détruite par une pluie de feu et de soufre, avec Gomorrhe. Quelle ville suis-je ?'
+    ] },
+
+  { id: 'egypte', theme: 'Lieu', reponse: 'L’Égypte', accepte: ['egypte'],
+    reference: 'Genèse 12:10 ; 41:41 ; Exode 1:13, 14 ; 12:29-31',
+    indices: [
+      'Abraham y est descendu à cause d’une famine.',
+      'Joseph y est devenu le second du pays.',
+      'Les Israélites y ont été esclaves.',
+      'Dix plaies ont frappé ce pays avant la sortie d’Israël. Quel pays suis-je ?'
+    ] },
+
+  { id: 'babylone', theme: 'Lieu', reponse: 'Babylone', accepte: [],
+    reference: 'Jérémie 29:10 ; Daniel 1:1, 2 ; 5:30, 31',
+    indices: [
+      'Le fleuve Euphrate me traversait.',
+      'Nabuchodonosor était mon roi le plus célèbre.',
+      'Les Juifs y ont été emmenés en exil.',
+      'Les Mèdes et les Perses m’ont prise en une nuit, pendant le festin de Belshatsar. Quelle ville suis-je ?'
+    ] },
+
+  { id: 'jerusalem', theme: 'Lieu', reponse: 'Jérusalem', accepte: ['sion'],
+    reference: 'Juges 19:10 ; 2 Samuel 5:6-9 ; 1 Rois 6:1 ; Luc 19:41',
+    indices: [
+      'On m’appelait autrefois Jébus.',
+      'David m’a conquise et en a fait sa capitale.',
+      'Salomon y a construit le temple de Jéhovah.',
+      'Jésus a pleuré sur moi. Quelle ville suis-je ?'
+    ] },
+
+  { id: 'damas', theme: 'Lieu', reponse: 'Damas', accepte: [],
+    reference: '2 Rois 5:12 ; Actes 9:1-8',
+    indices: [
+      'Naamân préférait mes fleuves, l’Abana et le Pharpar, à ceux d’Israël.',
+      'Je suis une ville de Syrie.',
+      'Saul s’y rendait pour arrêter des disciples de Jésus.',
+      'Sur la route qui mène à moi, Jésus lui est apparu dans une grande lumière. Quelle ville suis-je ?'
+    ] },
+
+  { id: 'gethsemane', theme: 'Lieu', reponse: 'Gethsémané', accepte: [],
+    reference: 'Matthieu 26:36-46 ; Jean 18:1-3',
+    indices: [
+      'Je suis un jardin, de l’autre côté du torrent du Cédron.',
+      'Jésus y allait souvent avec ses disciples.',
+      'Il y a prié avec une grande angoisse, pendant que ses apôtres dormaient.',
+      'Judas y est venu avec une foule armée pour l’arrêter. Quel est mon nom ?'
+    ] },
+
+  { id: 'corinthe', theme: 'Lieu', reponse: 'Corinthe', accepte: [],
+    reference: 'Actes 18:1-11 ; 1 Corinthiens 1:2',
+    indices: [
+      'Je suis une ville grecque, célèbre pour son commerce.',
+      'Paul y a vécu un an et demi.',
+      'Il y a fabriqué des tentes avec Aquila et Priscille.',
+      'Paul a écrit deux lettres aux chrétiens de chez moi. Quelle ville suis-je ?'
+    ] },
+
+  /* ---------------------------------------------------- objets (suite) --- */
+
+  { id: 'veau-or', theme: 'Objet', reponse: 'Le veau d’or', accepte: ['veau d or', 'veau'],
+    reference: 'Exode 32:1-6, 19, 20',
+    indices: [
+      'J’ai été fait avec les boucles d’oreilles du peuple.',
+      'Aaron m’a façonné avec un outil de graveur.',
+      'Le peuple a dansé autour de moi pendant que Moïse était sur la montagne.',
+      'Moïse m’a brûlé, réduit en poudre et répandu sur l’eau. Qui suis-je ?'
+    ] },
+
+  { id: 'tables-loi', theme: 'Objet', reponse: 'Les tables de la Loi', accepte: ['tables de la loi', 'tables', 'tablettes'],
+    reference: 'Exode 31:18 ; 32:19 ; 34:1, 28',
+    indices: [
+      'Nous étions deux, en pierre.',
+      'Nous avons été écrites par le doigt de Dieu.',
+      'Moïse nous a brisées en voyant le veau d’or.',
+      'Nous portions les Dix Paroles. Que sommes-nous ?'
+    ] },
+
+  { id: 'tabernacle', theme: 'Objet', reponse: 'Le tabernacle', accepte: ['tabernacle', 'tente de la rencontre'],
+    reference: 'Exode 26:33 ; 36:1 ; 40:34',
+    indices: [
+      'Bézalel et Oholiab ont dirigé ma construction.',
+      'Un rideau me séparait en deux parties : le Saint et le Très-Saint.',
+      'On me démontait et me transportait à chaque étape du voyage.',
+      'Tente sacrée, j’ai servi de lieu de culte à Israël dans le désert. Qui suis-je ?'
+    ] },
+
+  { id: 'baton-aaron', theme: 'Objet', reponse: 'Le bâton d’Aaron', accepte: ['baton d aaron', 'baton'],
+    reference: 'Exode 7:10 ; Nombres 17:8-10',
+    indices: [
+      'Devant Pharaon, je me suis changé en grand serpent.',
+      'On m’a déposé avec les bâtons des chefs des douze tribus.',
+      'En une nuit, j’ai bourgeonné, fleuri et produit des amandes.',
+      'On m’a gardé devant l’Arche, comme signe. Qui suis-je ?'
+    ] },
+
+  /* ---------------------------------------------------- livres (suite) --- */
+
+  { id: 'exode', theme: 'Livre', reponse: 'Exode', accepte: ['l exode'],
+    reference: 'Exode 12:40, 41 ; 14:21, 22 ; 20:1-17',
+    indices: [
+      'Je décris la construction du tabernacle.',
+      'Je raconte les Dix Plaies.',
+      'On y trouve la traversée de la mer Rouge et les Dix Paroles.',
+      'Mon nom signifie « sortie ». Quel livre suis-je ?'
+    ] },
+
+  { id: 'ecclesiaste', theme: 'Livre', reponse: 'Ecclésiaste', accepte: ['l ecclesiaste'],
+    reference: 'Ecclésiaste 1:1, 2 ; 9:5 ; 12:13',
+    indices: [
+      'Je dis que les morts ne savent rien du tout.',
+      'Je répète que, sous le soleil, tout est futilité.',
+      'Mon auteur se présente comme « le rassembleur », fils de David.',
+      'Je conclus : « Crains le vrai Dieu et observe ses commandements. » Quel livre suis-je ?'
+    ] },
+
+  { id: 'lamentations', theme: 'Livre', reponse: 'Lamentations', accepte: ['les lamentations'],
+    reference: 'Lamentations 1:1 ; 3:22, 23',
+    indices: [
+      'Plusieurs de mes chapitres sont des acrostiches alphabétiques.',
+      'Je dis que les miséricordes de Jéhovah sont nouvelles chaque matin.',
+      'Je suis un chant de deuil sur la destruction de Jérusalem.',
+      'J’ai été écrit par Jérémie. Quel livre suis-je ?'
+    ] },
+
+  { id: 'hebreux', theme: 'Livre', reponse: 'Hébreux', accepte: ['lettre aux hebreux', 'les hebreux'],
+    reference: 'Hébreux 4:14 ; 11:1',
+    indices: [
+      'Je présente Jésus comme un grand prêtre supérieur à ceux d’Israël.',
+      'J’explique que la Loi n’était qu’une ombre des choses à venir.',
+      'Mon chapitre 11 définit la foi et cite une longue liste de témoins fidèles.',
+      'Je suis une lettre écrite aux chrétiens d’origine juive. Quel livre suis-je ?'
+    ] },
+
+  { id: 'jacques-livre', theme: 'Livre', reponse: 'Jacques', accepte: ['lettre de jacques'],
+    reference: 'Jacques 2:26 ; 3:5 ; 4:8',
+    indices: [
+      'Je compare la langue à un petit feu qui embrase une grande forêt.',
+      'Je dis : « Approchez-vous de Dieu, et il s’approchera de vous. »',
+      'J’affirme que la foi sans les œuvres est morte.',
+      'J’ai été écrit par un demi-frère de Jésus. Quel livre suis-je ?'
+    ] },
+
+  /* --------------------------------------------------- nombres (suite) --- */
+
+  { id: 'dix', theme: 'Nombre', reponse: 'Dix', accepte: ['10'],
+    reference: 'Genèse 18:32 ; Luc 17:12-17 ; Exode 34:28',
+    indices: [
+      'C’est le nombre de lépreux que Jésus a guéris en une fois.',
+      'Abraham a demandé si Sodome serait épargnée pour ce nombre de justes.',
+      'C’est le nombre des plaies d’Égypte.',
+      'C’est le nombre des Paroles écrites sur les tables de la Loi. Quel est ce nombre ?'
+    ] },
+
+  { id: 'cinq', theme: 'Nombre', reponse: 'Cinq', accepte: ['5'],
+    reference: '1 Samuel 17:40 ; Matthieu 14:17 ; 25:2',
+    indices: [
+      'C’est le nombre de vierges sages dans la parabole.',
+      'David a pris ce nombre de pierres lisses dans le torrent.',
+      'C’est le nombre des livres écrits par Moïse.',
+      'Jésus a nourri des milliers de personnes avec ce nombre de pains. Quel est ce nombre ?'
+    ] },
+
+  { id: 'soixante-dix', theme: 'Nombre', reponse: 'Soixante-dix', accepte: ['70', 'soixante dix'],
+    reference: 'Jérémie 29:10 ; Daniel 9:24 ; Luc 10:1',
+    indices: [
+      'Jésus a envoyé ce nombre de disciples prêcher, deux par deux.',
+      'C’est le nombre de « semaines » de la prophétie de Daniel.',
+      'Jérémie a annoncé ce nombre d’années pour Babylone.',
+      'C’est la durée, en années, de la désolation de Jérusalem. Quel est ce nombre ?'
+    ] },
+
+  { id: 'cent-quarante-quatre-mille', theme: 'Nombre', reponse: '144 000', accepte: ['144000', 'cent quarante quatre mille'],
+    reference: 'Révélation 7:4 ; 14:1, 3',
+    indices: [
+      'Ils sont scellés, pris de toutes les tribus des fils d’Israël.',
+      'Ils se tiennent avec l’Agneau sur le mont Sion.',
+      'Ils ont été achetés d’entre les humains.',
+      'Combien sont-ils, selon la Révélation ?'
     ] }
+
 ];
 
 /*
@@ -807,7 +1366,7 @@ const QUESTIONS_ENFANTS = [
       'J’ai baptisé Jésus dans le fleuve. Qui suis-je ?'
     ] },
 
-  { id: 'e-pierre', theme: 'Personnage', reponse: 'Pierre', accepte: ['simon pierre', 'simon'],
+  { id: 'e-pierre', theme: 'Personnage', reponse: 'Pierre', accepte: ['simon pierre'],
     reference: 'Matthieu 4:18 ; 14:29 ; Jean 1:42',
     indices: [
       'J’étais pêcheur, avec mon frère André.',

@@ -48,7 +48,10 @@ les touches 1 à 8 servent de buzzers. L'écran reste allumé pendant la partie.
 
 On tape vite, sous pression : la réponse est comparée **sans accents, sans
 majuscules et sans article** (« le », « la », « le roi », « le mont »…), et une
-petite faute de frappe est pardonnée sur les mots longs. « moise », « Moïse »,
+petite faute de frappe est pardonnée sur les mots longs, jamais sur la
+première lettre (« Anne » n'est pas « manne »). Une phrase est acceptée si la
+réponse y figure avec de simples mots de liaison (« c'est David », « le roi
+David »), mais « Jean-Baptiste » n'est pas « Jean ». « moise », « Moïse »,
 « Nabucodonosor », « 12 » pour douze sont justes.
 
 Les questions déjà posées ne reviennent pas avant que tout le questionnaire y
@@ -59,7 +62,8 @@ soit passé.
 Un questionnaire à part, pour les 5-10 ans : trois indices courts, des récits
 qu'ils connaissent (Noé, David et Goliath, Jonas, Daniel…), des animaux, des
 objets, des métiers et des nombres. Le jeu y est plus indulgent : une faute
-d'orthographe de plus est pardonnée (« Jonnas », « Goliat »), et la dernière
+d'orthographe de plus est pardonnée sur les mots longs (« Goliat »,
+« colonbe »), et la dernière
 chance dure quinze secondes au lieu de dix.
 
 ## Le questionnaire
@@ -67,7 +71,7 @@ chance dure quinze secondes au lieu de dix.
 Tout est dans [`js/questions.js`](js/questions.js), chaque question avec sa
 référence :
 
-- `QUESTIONS` — 70 questions pour les adultes (personnages, lieux, objets,
+- `QUESTIONS` — 131 questions pour les adultes (personnages, lieux, objets,
   livres, nombres), quatre indices ;
 - `QUESTIONS_ENFANTS` — 44 questions pour les 5-10 ans, trois indices simples.
   Leurs identifiants commencent par `e-`.

@@ -53,27 +53,46 @@ const Reponse = (() => {
 
   /**
    * Fautes tolérées selon la longueur du mot attendu. Les enfants écrivent
-   * comme ils entendent (« Jonnas », « Goliat ») : une faute de plus.
+   * comme ils entendent (« Goliat », « colonbe ») : une faute de plus sur
+   * les mots longs.
    */
   function tolerance(attendu, indulgent) {
     if (/^\d+$/.test(attendu)) return 0;
-    const bonus = indulgent && attendu.length >= 4 ? 1 : 0;
+    const bonus = indulgent && attendu.length >= 6 ? 1 : 0;
     if (attendu.length >= 9) return 2 + bonus;
     if (attendu.length >= 5) return 1 + bonus;
     return bonus;
   }
 
+  // Mots qu'on ajoute autour d'une réponse sans en changer le sens.
+  const LIAISON = new Set([
+    'c', 'est', 'ce', 'je', 'pense', 'crois', 'que', 'qu', 'il', 'elle', 's', 'agit', 'd',
+    'de', 'du', 'le', 'la', 'les', 'l', 'un', 'une', 'roi', 'reine', 'prophete', 'prophetesse',
+    'apotre', 'mont', 'ville', 'livre', 'saint', 'nombre', 'bien', 'sur', 'oui'
+  ]);
+
+  /**
+   * Faute de frappe pardonnée ? Jamais sur la première lettre : « Anne » n'est
+   * pas « manne », ni « Abel », « Babel ».
+   */
+  function ressemble(saisie, attendu, indulgent) {
+    if (saisie === attendu) return true;
+    if (saisie[0] !== attendu[0]) return false;
+    return distance(saisie, attendu) <= tolerance(attendu, indulgent);
+  }
+
   function proche(saisie, attendu, indulgent) {
     if (!saisie || !attendu) return false;
-    if (saisie === attendu) return true;
-    if (distance(saisie, attendu) <= tolerance(attendu, indulgent)) return true;
-    // « c'est Moïse », « Moïse le prophète » : la bonne réponse est dedans.
+    if (ressemble(saisie, attendu, indulgent)) return true;
+    // « c'est Moïse », « Moïse le prophète » : la bonne réponse est dedans,
+    // entourée de simples mots de liaison (« Jean-Baptiste » n'est pas « Jean »).
     const mots = saisie.split(' ');
     const cible = attendu.split(' ');
     if (mots.length > cible.length + 3) return false;
     for (let i = 0; i + cible.length <= mots.length; i++) {
       const morceau = mots.slice(i, i + cible.length).join(' ');
-      if (distance(morceau, attendu) <= tolerance(attendu, indulgent)) return true;
+      const reste = mots.slice(0, i).concat(mots.slice(i + cible.length));
+      if (reste.every(m => LIAISON.has(m)) && ressemble(morceau, attendu, indulgent)) return true;
     }
     return false;
   }
