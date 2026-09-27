@@ -1,5 +1,5 @@
-# Questio
+# Quaestio
 
 Un jeu biblique de questions, dans l'esprit de *Questions pour un champion*.
 
-*Questio* : « question », « recherche » en latin.
+*Quaestio* : « question », « recherche » en latin.
