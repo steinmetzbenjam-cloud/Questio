@@ -4,7 +4,7 @@
  * l'installation.
  */
 
-const CACHE = 'questio-v17';
+const CACHE = 'questio-v18';
 
 const COQUILLE = [
   './',

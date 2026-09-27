@@ -75,7 +75,7 @@ chance dure quinze secondes au lieu de dix.
 Tout est dans [`js/questions.js`](js/questions.js), chaque question avec sa
 référence :
 
-- `QUESTIONS` — 131 questions pour les adultes (personnages, lieux, objets,
+- `QUESTIONS` — 171 questions pour les adultes (personnages, lieux, objets,
   livres, nombres), quatre indices ;
 - `QUESTIONS_ENFANTS` — 44 questions pour les 5-10 ans, trois indices simples.
   Leurs identifiants commencent par `e-`.
@@ -94,6 +94,8 @@ Pour en ajouter une, copier ce modèle dans la liste :
 ```
 
 - `id` doit être unique ;
+- plusieurs questions peuvent avoir la même réponse avec d'autres indices
+  (`moise-b`…) : elles ne sont jamais tirées dans la même partie ;
 - `accepte` liste les autres formes justes (surnom, autre orthographe) ;
 - des phrases courtes : chacune est lue d'un seul tenant, et c'est au début de
   la phrase interrompue que la lecture reprend.

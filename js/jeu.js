@@ -336,7 +336,16 @@ const Jeu = (() => {
       for (const q of liste) posees.delete(q.id);
       neuves = liste.slice();
     }
-    const tirage = melanger(neuves).slice(0, Math.min(nombre, neuves.length));
+    // Deux questions de même réponse (variantes) ne sont jamais tirées ensemble.
+    const reponses = new Set();
+    const tirage = [];
+    for (const q of melanger(neuves)) {
+      if (tirage.length >= nombre) break;
+      const cle = Reponse.normaliser(q.reponse);
+      if (reponses.has(cle)) continue;
+      reponses.add(cle);
+      tirage.push(q);
+    }
     for (const q of tirage) posees.add(q.id);
     memoire.ecrire('posees', Array.from(posees));
     return tirage;
