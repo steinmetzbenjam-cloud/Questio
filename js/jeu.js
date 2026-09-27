@@ -707,7 +707,8 @@ const Jeu = (() => {
         texte: derniere ? 'Voir le classement' : 'Question suivante',
         onclick: questionSuivante
       })
-    ]));
+    // Tournée vers le gagnant : c'est lui qui passe à la question suivante.
+    ]), gagnant === null ? undefined : gagnant);
 
     if (reglages.voix) {
       Voix.dire(gagnant === null
