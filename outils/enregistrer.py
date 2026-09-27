@@ -35,6 +35,7 @@ COMMUNES = {
     'essai': 'Bienvenue dans Questio ! Je suis né à Tarse. Qui suis-je ?',
     'fin': 'Bravo ! Voici le classement.',
     'fin-personne': 'Partie terminée ! La prochaine sera la bonne.',
+    'volume': 'Voici le volume de Questio.',
 }
 
 

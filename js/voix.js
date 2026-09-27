@@ -12,6 +12,68 @@
  * Sans synthèse vocale (ou voix coupée), la lecture est simulée au rythme
  * d'une voix : le texte s'affiche et le jeu se déroule de la même façon.
  */
+/* -------------------------------------------------------------- volume --- */
+
+/*
+ * Un seul moteur audio pour la voix enregistrée et les petits sons, avec un
+ * volume général réglable dans Questio. Sur iPhone, les boutons du téléphone
+ * ne règlent le son d'une application web que pendant qu'elle joue : entre
+ * deux phrases, ils règlent la sonnerie. Et le volume d'un lecteur audio n'y
+ * est pas modifiable directement. D'où ce réglage à nous.
+ */
+const Sortie = (() => {
+  let contexte = null;
+  let principal = null;
+  let niveau = 0.7;
+
+  /** Crée le moteur (à faire pendant un toucher : iOS l'exige). */
+  function preparer() {
+    if (contexte) return contexte;
+    try {
+      contexte = new (window.AudioContext || window.webkitAudioContext)();
+      principal = contexte.createGain();
+      principal.gain.value = gain();
+      principal.connect(contexte.destination);
+    } catch (e) {
+      contexte = null;
+    }
+    return contexte;
+  }
+
+  /** Relance le moteur si iOS l'a mis en pause (appel, mise en veille…). */
+  function reveiller() {
+    if (contexte && contexte.state !== 'running') {
+      const r = contexte.resume();
+      if (r) r.catch(() => {});
+    }
+  }
+
+  function actif() {
+    return !!contexte && contexte.state === 'running';
+  }
+
+  // L'oreille perçoit le volume de façon non linéaire : on élève au carré.
+  function gain() {
+    return niveau * niveau;
+  }
+
+  function regler(valeur) {
+    niveau = Math.max(0, Math.min(1, valeur));
+    if (principal) principal.gain.value = gain();
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') reveiller();
+  });
+
+  return {
+    preparer, reveiller, actif, regler,
+    niveau: () => niveau,
+    contexte: () => contexte,
+    entree: () => principal
+  };
+})();
+
 /* ------------------------------------------------------- enregistrements --- */
 
 /*
@@ -50,8 +112,31 @@ const Voix = (() => {
   const NOM_ENREGISTREE = 'Audrey';
 
   const synthese = 'speechSynthesis' in window ? window.speechSynthesis : null;
-  const lecteur = new Audio();
-  lecteur.preload = 'auto';
+
+  // Deux lecteurs : l'un passe par le moteur audio (volume réglable), l'autre
+  // sert de secours si le moteur est en pause, pour ne jamais rester muet.
+  const lecteurRegle = new Audio();
+  const lecteurLibre = new Audio();
+  lecteurRegle.preload = lecteurLibre.preload = 'auto';
+  let lecteurBranche = false;
+  let lecteur = lecteurLibre;
+
+  function brancherLecteur() {
+    const ctx = Sortie.preparer();
+    if (!ctx || lecteurBranche) return;
+    try {
+      ctx.createMediaElementSource(lecteurRegle).connect(Sortie.entree());
+      lecteurBranche = true;
+    } catch (e) { /* le lecteur libre fera l'affaire */ }
+  }
+
+  function choisirLecteur() {
+    Sortie.reveiller();
+    lecteur = lecteurBranche && Sortie.actif() ? lecteurRegle : lecteurLibre;
+    // Hors iPhone, le lecteur de secours accepte un volume direct.
+    try { lecteurLibre.volume = Sortie.niveau() * Sortie.niveau(); } catch (e) { /* ignoré sur iOS */ }
+    return lecteur;
+  }
   let voixChoisie = null;
   let preference = null;   // identifiant de la voix choisie par l'utilisateur
   let enCours = null;      // résolution de la phrase en cours de lecture
@@ -149,11 +234,15 @@ const Voix = (() => {
    * et on prononce un silence, ce qui les débloque pour la suite.
    */
   function debloquer() {
-    try {
-      lecteur.src = adresseSilence();
-      const essai = lecteur.play();
-      if (essai) essai.catch(() => {});
-    } catch (e) { /* pas de lecteur audio */ }
+    brancherLecteur();
+    Sortie.reveiller();
+    for (const l of [lecteurRegle, lecteurLibre]) {
+      try {
+        l.src = adresseSilence();
+        const essai = l.play();
+        if (essai) essai.catch(() => {});
+      } catch (e) { /* pas de lecteur audio */ }
+    }
     // Avec la voix enregistrée, on ne réveille pas la voix du téléphone :
     // pendant qu'elle parle, même un silence, iOS baisse le son des autres
     // lectures, et Audrey démarrait trop bas.
@@ -201,6 +290,7 @@ const Voix = (() => {
         phrase.lang = 'fr-FR';
         if (voixChoisie) phrase.voice = voixChoisie;
         phrase.rate = vitesse;
+        phrase.volume = Sortie.niveau();
         phrase.onend = () => conclure(true);
         phrase.onerror = () => conclure(false);
         // Garde-fou : certains navigateurs oublient d'annoncer la fin.
@@ -217,6 +307,7 @@ const Voix = (() => {
         Enregistrements.adresse(reglages.enregistrement).then(adresse => {
           if (fini) return;
           if (!adresse) { parler(); return; } // enregistrement absent : la voix du téléphone
+          choisirLecteur();
           lecteur.onended = () => conclure(true);
           lecteur.onerror = () => parler();
           lecteur.src = adresse;
@@ -234,8 +325,10 @@ const Voix = (() => {
   /** Coupe net la lecture en cours. */
   function taire() {
     clearTimeout(minuterie);
-    lecteur.onended = lecteur.onerror = null;
-    try { lecteur.pause(); } catch (e) { /* rien à couper */ }
+    for (const l of [lecteurRegle, lecteurLibre]) {
+      l.onended = l.onerror = null;
+      try { l.pause(); } catch (e) { /* rien à couper */ }
+    }
     if (synthese) synthese.cancel();
     if (enCours) enCours(false);
   }
@@ -249,19 +342,15 @@ const Voix = (() => {
 /* ------------------------------------------------------------------ sons --- */
 
 const Sons = (() => {
-  let contexte = null;
 
   /** À appeler lors d'un toucher : les navigateurs exigent un geste. */
   function debloquer() {
-    try {
-      if (!contexte) contexte = new (window.AudioContext || window.webkitAudioContext)();
-      if (contexte.state === 'suspended') contexte.resume();
-    } catch (e) {
-      contexte = null;
-    }
+    Sortie.preparer();
+    Sortie.reveiller();
   }
 
   function note(frequence, debut, duree, forme, volume) {
+    const contexte = Sortie.contexte();
     if (!contexte) return;
     const t = contexte.currentTime + debut;
     const osc = contexte.createOscillator();
@@ -271,7 +360,7 @@ const Sons = (() => {
     gain.gain.setValueAtTime(0.0001, t);
     gain.gain.exponentialRampToValueAtTime(volume || 0.25, t + 0.02);
     gain.gain.exponentialRampToValueAtTime(0.0001, t + duree);
-    osc.connect(gain).connect(contexte.destination);
+    osc.connect(gain).connect(Sortie.entree());
     osc.start(t);
     osc.stop(t + duree + 0.05);
   }

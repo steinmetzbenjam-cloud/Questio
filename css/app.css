@@ -76,6 +76,16 @@ button:disabled { cursor: default; }
 .entete__titre { margin: 0; font-family: var(--titre); font-size: 1.5rem; font-weight: 800; }
 .entete__vide { width: 42px; }
 
+.volume { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 1.1rem; }
+.volume__valeur { font-weight: 700; color: var(--or); }
+
+.volume__curseur {
+  flex: 1;
+  height: 32px;
+  accent-color: var(--or);
+  background: transparent;
+}
+
 .bascule.bascule--seule { padding-top: 0; border-top: 0; }
 .bascule--seule + .voix { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--bord); }
 

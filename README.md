@@ -16,8 +16,9 @@ ligne.
 
 1. **Accueil** — le nombre de joueurs (1 à 8) et leurs noms, les questions
    **Adultes** ou **Enfants** (5-10 ans) et leur nombre (5, 10, 15 ou 20).
-   La **roue crantée** en haut à droite ouvre les réglages de la lecture à voix
-   haute : marche ou arrêt, la voix (parmi les voix françaises du téléphone,
+   La **roue crantée** en haut à droite ouvre les réglages : le **volume** de
+   Questio (sur iPhone, les boutons du téléphone ne règlent le son d'une
+   application web que pendant qu'elle joue), et la lecture à voix haute : marche ou arrêt, la voix (parmi les voix françaises du téléphone,
    ★ pour les voix améliorées) et sa vitesse. Tout est retenu pour la
    prochaine fois.
 2. **Lancer la partie.** Chaque question se lit **indice par indice**, du plus

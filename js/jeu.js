@@ -31,7 +31,8 @@ const Jeu = (() => {
     public: 'adultes', // ou « enfants » : questionnaire des 5-10 ans
     voix: true,
     voixNom: null,   // null : la voix enregistrée (Audrey)
-    vitesse: 1
+    vitesse: 1,
+    volume: 0.7      // volume de Questio, de 0 à 1
   }, memoire.lire('reglages', {}));
 
   // Version 14 : la voix enregistrée (Audrey) devient la voix par défaut,
@@ -45,6 +46,7 @@ const Jeu = (() => {
   if (reglages.public !== 'enfants') reglages.public = 'adultes';
   Voix.utiliser(reglages.voixNom);
   Voix.reglerVitesse(reglages.vitesse);
+  Sortie.regler(reglages.volume);
 
   let partie = null;
   let verrouEcran = null;
@@ -228,6 +230,40 @@ const Jeu = (() => {
       montrer();
     });
     montrer();
+
+    /* — volume de Questio (voix et petits sons) — */
+    const curseur = el('input.volume__curseur', {
+      type: 'range', min: '0', max: '100', step: '5',
+      'aria-label': 'Volume de Questio'
+    });
+    curseur.value = Math.round(reglages.volume * 100);
+    const valeur = el('span.volume__valeur', { texte: curseur.value + ' %' });
+    curseur.addEventListener('input', () => {
+      reglages.volume = curseur.value / 100;
+      valeur.textContent = curseur.value + ' %';
+      Sortie.preparer();
+      Sortie.regler(reglages.volume);
+    });
+    // On fait entendre le nouveau volume quand on lâche le curseur.
+    curseur.addEventListener('change', () => {
+      enregistrerReglages();
+      Sons.debloquer();
+      Voix.debloquer();
+      if (reglages.voix) Voix.dire('Voici le volume de Questio.', { enregistrement: 'volume' });
+      else Sons.juste();
+    });
+
+    conteneur.appendChild(el('section.carte', null, [
+      el('div.carte__tete', null, [
+        el('h2.carte__titre', { texte: 'Volume' }),
+        valeur
+      ]),
+      el('div.volume', null, [el('span', { texte: '🔈', 'aria-hidden': 'true' }), curseur, el('span', { texte: '🔊', 'aria-hidden': 'true' })]),
+      el('p.bascule__aide', {
+        texte: 'Sur iPhone, les boutons du téléphone ne règlent le son de Questio que pendant qu’il parle ; '
+          + 'entre deux phrases, ils règlent la sonnerie. Ce curseur, lui, agit à tout moment.'
+      })
+    ]));
 
     conteneur.appendChild(el('section.carte', null, [
       el('label.bascule.bascule--seule', null, [
