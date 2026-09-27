@@ -33,9 +33,9 @@ ligne.
 4. **Il tape sa réponse**, ou la **dicte** avec le bouton 🎤, et valide. En
    dictée, si l'une des transcriptions proposées par le téléphone est la bonne
    réponse, elle est validée d'elle-même ; sinon le texte reste dans le champ
-   pour être corrigé. **Dix secondes** pour répondre : à la fin, ce qui est
-   écrit (ou dicté) est vérifié tel quel ; un champ vide vaut « Temps
-   écoulé ! », comme une mauvaise réponse.
+   pour être corrigé. **Dix secondes** pour commencer à répondre : le chrono
+   s'arrête dès qu'on écrit ou qu'on touche le micro ; s'il va au bout, le
+   champ vide vaut « Temps écoulé ! », comme une mauvaise réponse.
    - **Juste** : un point, une félicitation tirée au hasard parmi douze
      (« Digne des Béréens ! », « Sage comme Salomon ! »…), puis la réponse et
      ses références bibliques.

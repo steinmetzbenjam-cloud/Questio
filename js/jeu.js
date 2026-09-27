@@ -684,6 +684,7 @@ const Jeu = (() => {
         return;
       }
       champ.blur(); // le clavier laisse la place
+      figerChrono();
       micro.classList.add('micro--ecoute');
       etat.hidden = false;
       etat.className = 'reponse__etat';
@@ -716,6 +717,15 @@ const Jeu = (() => {
     });
 
     const chrono = el('div.jauge.jauge--reponse', null, [el('div.jauge__barre')]);
+    // Dès qu'on écrit ou qu'on dicte, le chrono s'arrête : il ne sert qu'à
+    // éviter qu'un joueur bloque la partie sans rien proposer.
+    const figerChrono = () => {
+      if (!minuterieReponse) return;
+      arreterMinuterieReponse();
+      chrono.classList.remove('jauge--urgente');
+      chrono.classList.add('jauge--arretee');
+    };
+    champ.addEventListener('input', figerChrono);
 
     ouvrirPanneau([
       el('p.panneau__surtitre', { texte: 'À toi de répondre' }),

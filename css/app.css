@@ -557,6 +557,8 @@ button:disabled { cursor: default; }
 
 .jauge--reponse { margin: -4px 0 14px; }
 .jauge--urgente .jauge__barre { background: var(--rouge); }
+.jauge--arretee { opacity: .35; }
+.jauge--arretee .jauge__barre { background: var(--doux); }
 
 .jauge__barre { height: 100%; width: 100%; background: var(--or); transition: width .1s linear; }
 
