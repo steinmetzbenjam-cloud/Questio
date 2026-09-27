@@ -44,9 +44,9 @@ def lire_questions():
 ObjC.import('Foundation');
 const src = $.NSString.stringWithContentsOfFileEncodingError(
   {json.dumps(os.path.join(RACINE, 'js', 'questions.js'))}, $.NSUTF8StringEncoding, null).js;
-const [a, e, f] = eval(src + '; [QUESTIONS, QUESTIONS_ENFANTS, FELICITATIONS]');
+const [a, e, h, f] = eval(src + '; [QUESTIONS, QUESTIONS_ENFANTS, QUESTIONS_HISTOIRE, FELICITATIONS]');
 JSON.stringify({{
-  questions: a.concat(e).map(q => ({{ id: q.id, reponse: q.reponse, indices: q.indices }})),
+  questions: a.concat(e, h).map(q => ({{ id: q.id, reponse: q.reponse, indices: q.indices }})),
   felicitations: f
 }});
 """

@@ -2225,6 +2225,260 @@ const QUESTIONS_ENFANTS = [
 ];
 
 /*
+ * Histoire des Témoins de Jéhovah, pour les adultes. Les références sont
+ * bibliques quand il y a lieu ; sinon, elles renvoient au livre « Les
+ * Témoins de Jéhovah, prédicateurs du Royaume de Dieu » (1993).
+ */
+const QUESTIONS_HISTOIRE = [
+
+  /* ---------------------------------------------------------- personnes --- */
+
+  { id: 'h-russell', theme: 'Personnage', reponse: 'Charles Taze Russell', accepte: ['russell', 'charles russell', 'c t russell'],
+    reference: 'Prédicateurs du Royaume (1993)',
+    indices: [
+      'Je suis né en 1852, près de Pittsburgh, en Pennsylvanie.',
+      'Jeune homme, j’ai formé un petit groupe d’étude de la Bible.',
+      'En 1879, j’ai lancé la revue qui est devenue La Tour de Garde.',
+      'J’ai écrit les Études des Écritures, et je suis mort en 1916. Qui suis-je ?'
+    ] },
+
+  { id: 'h-rutherford', theme: 'Personnage', reponse: 'Joseph Rutherford', accepte: ['rutherford', 'joseph franklin rutherford', 'juge rutherford'],
+    reference: 'Prédicateurs du Royaume (1993)',
+    indices: [
+      'J’étais avocat, et l’on m’appelait parfois « le juge ».',
+      'En 1918, j’ai été emprisonné à Atlanta avec sept autres frères.',
+      'J’ai succédé à Charles Russell en 1917.',
+      'En 1931, j’ai proposé que nous prenions le nom de Témoins de Jéhovah. Qui suis-je ?'
+    ] },
+
+  { id: 'h-knorr', theme: 'Personnage', reponse: 'Nathan Knorr', accepte: ['knorr', 'nathan h knorr'],
+    reference: 'Prédicateurs du Royaume (1993)',
+    indices: [
+      'Je suis devenu président de la Société Watch Tower en 1942.',
+      'Sous ma direction, l’École de Galaad a ouvert en 1943.',
+      'J’ai aussi lancé une école pour apprendre à parler en public dans les congrégations.',
+      'J’ai été président jusqu’à ma mort, en 1977. Qui suis-je ?'
+    ] },
+
+  { id: 'h-franz', theme: 'Personnage', reponse: 'Frederick Franz', accepte: ['franz', 'fred franz', 'frederick w franz'],
+    reference: 'Prédicateurs du Royaume (1993)',
+    indices: [
+      'J’ai été baptisé en 1913.',
+      'J’avais étudié le grec et je connaissais bien les langues bibliques.',
+      'J’ai succédé à Nathan Knorr en 1977.',
+      'J’ai été président jusqu’à ma mort, en 1992, à 99 ans. Qui suis-je ?'
+    ] },
+
+  { id: 'h-duplessis', theme: 'Personnage', reponse: 'Maurice Duplessis', accepte: ['duplessis'],
+    reference: 'Prédicateurs du Royaume (1993)',
+    indices: [
+      'J’étais premier ministre du Québec.',
+      'Sous mon gouvernement, des centaines de Témoins ont été arrêtés pour avoir distribué des tracts.',
+      'J’ai fait retirer son permis d’alcool à Frank Roncarelli, un restaurateur qui payait leurs cautions.',
+      'En 1959, la Cour suprême du Canada m’a condamné. Qui suis-je ?'
+    ] },
+
+  /* ------------------------------------------------------------- noms --- */
+
+  { id: 'h-nom', theme: 'Nom', reponse: 'Témoins de Jéhovah', accepte: ['temoins de jehovah', 'temoins'],
+    reference: 'Isaïe 43:10-12 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'Avant, on nous appelait les Étudiants de la Bible.',
+      'Ce nom a été adopté en 1931, lors d’une assemblée à Columbus, dans l’Ohio.',
+      'Il s’appuie sur Isaïe 43:10 : « Vous êtes mes témoins. »',
+      'Quel nom avons-nous adopté ?'
+    ] },
+
+  { id: 'h-etudiants', theme: 'Nom', reponse: 'Étudiants de la Bible', accepte: ['etudiants de la bible', 'etudiants de la bible internationaux', 'etudiants'],
+    reference: 'Prédicateurs du Royaume (1993)',
+    indices: [
+      'C’est ainsi qu’on appelait les groupes formés autour de Charles Russell.',
+      'En Allemagne, on disait « Bibelforscher ».',
+      'Ce nom a été remplacé en 1931.',
+      'Quel était notre nom avant 1931 ?'
+    ] },
+
+  /* ------------------------------------------------------ publications --- */
+
+  { id: 'h-tour-garde', theme: 'Publication', reponse: 'La Tour de Garde', accepte: ['tour de garde'],
+    reference: 'Ézéchiel 33:7 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'Mon premier numéro est paru en juillet 1879.',
+      'Mon titre anglais d’origine parlait de Sion et de la présence du Christ.',
+      'Je suis l’un des périodiques les plus diffusés au monde.',
+      'Mon nom évoque la sentinelle qui veille. Qui suis-je ?'
+    ] },
+
+  { id: 'h-reveillez', theme: 'Publication', reponse: 'Réveillez-vous !', accepte: ['reveillez vous'],
+    reference: 'Romains 13:11 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'Je suis paru pour la première fois en 1919, sous le nom de « L’Âge d’Or ».',
+      'En 1937, j’ai été renommé « Consolation ».',
+      'Depuis 1946, je porte mon nom actuel.',
+      'Je suis le compagnon de La Tour de Garde. Qui suis-je ?'
+    ] },
+
+  { id: 'h-divin-plan', theme: 'Publication', reponse: 'Le Divin Plan des Âges', accepte: ['divin plan des ages', 'plan divin des ages'],
+    reference: 'Prédicateurs du Royaume (1993)',
+    indices: [
+      'J’ai été publié en 1886.',
+      'Je suis le premier volume des Études des Écritures.',
+      'Mon auteur est Charles Taze Russell.',
+      'Mon titre parle du dessein de Dieu à travers les âges. Qui suis-je ?'
+    ] },
+
+  { id: 'h-tmn', theme: 'Publication', reponse: 'La Traduction du monde nouveau', accepte: ['traduction du monde nouveau', 'monde nouveau', 'tmn'],
+    reference: 'Psaume 83:18 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'Les Écritures grecques chrétiennes sont parues en anglais en 1950.',
+      'La Bible complète est parue en 1961.',
+      'Elle rétablit le nom de Jéhovah des milliers de fois.',
+      'Une édition révisée est parue en français en 2018. Quelle est cette traduction ?'
+    ] },
+
+  { id: 'h-photodrame', theme: 'Prédication', reponse: 'Le Photo-Drame de la Création', accepte: ['photo drame de la creation', 'photo drame', 'photodrame'],
+    reference: 'Genèse 1:1 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'J’ai été présenté pour la première fois en 1914.',
+      'Je durais environ huit heures, en quatre parties.',
+      'Je mêlais des projections de photos, des films et des enregistrements sonores.',
+      'Des millions de personnes m’ont vu dès ma première année. Qui suis-je ?'
+    ] },
+
+  { id: 'h-phonographe', theme: 'Prédication', reponse: 'Le phonographe', accepte: ['phonographe', 'gramophone', 'tourne disque'],
+    reference: 'Prédicateurs du Royaume (1993)',
+    indices: [
+      'Dans les années 1930, on m’emportait de porte en porte.',
+      'Je faisais entendre des discours bibliques enregistrés.',
+      'Beaucoup de proclamateurs me transportaient dans une mallette.',
+      'Quel est cet appareil ?'
+    ] },
+
+  { id: 'h-salle', theme: 'Prédication', reponse: 'La Salle du Royaume', accepte: ['salle du royaume'],
+    reference: 'Hébreux 10:24, 25 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'Ce nom a été proposé par Joseph Rutherford en 1935.',
+      'Il est apparu lors d’une visite à Hawaï.',
+      'C’est là que la congrégation se réunit.',
+      'Comment appelle-t-on ce lieu de réunion ?'
+    ] },
+
+  { id: 'h-grande-foule', theme: 'Enseignement', reponse: 'La grande foule', accepte: ['grande foule'],
+    reference: 'Révélation 7:9, 10 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'Lors d’une assemblée à Washington, en 1935, un discours a éclairci ce sujet.',
+      'Il s’agit de personnes de toutes les nations qui espèrent vivre sur la terre.',
+      'La Révélation dit que personne ne pouvait la compter.',
+      'Comment la Bible appelle-t-elle ce groupe ?'
+    ] },
+
+  { id: 'h-1914', theme: 'Date', reponse: '1914', accepte: ['mil neuf cent quatorze'],
+    reference: 'Luc 21:24 ; Daniel 4:16, 17 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'Charles Russell et ses compagnons attendaient cette année depuis longtemps.',
+      'C’est l’année où a commencé la Première Guerre mondiale.',
+      'Les « temps fixés des nations » se sont alors achevés.',
+      'Jésus a commencé à régner comme Roi dans le ciel. Quelle est cette année ?'
+    ] },
+
+  /* ------------------------------------------------------------- lieux --- */
+
+  { id: 'h-cedar-point', theme: 'Lieu', reponse: 'Cedar Point', accepte: [],
+    reference: 'Matthieu 24:14 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'Des assemblées marquantes s’y sont tenues en 1919 et en 1922.',
+      'C’est un lieu au bord du lac Érié, dans l’Ohio.',
+      'En 1922, une grande banderole y a été déroulée.',
+      'On y a lancé l’appel : « Annoncez, annoncez, annoncez le Roi et son Royaume ! » Quel est ce lieu ?'
+    ] },
+
+  { id: 'h-brooklyn', theme: 'Lieu', reponse: 'Brooklyn', accepte: [],
+    reference: 'Prédicateurs du Royaume (1993)',
+    indices: [
+      'Le siège mondial s’y est installé en 1909, en quittant Pittsburgh.',
+      'Le Béthel y est resté plus de cent ans.',
+      'C’est un quartier de New York.',
+      'Le siège l’a quitté pour s’installer à Warwick. Quel est ce lieu ?'
+    ] },
+
+  { id: 'h-warwick', theme: 'Lieu', reponse: 'Warwick', accepte: [],
+    reference: 'Prédicateurs du Royaume (1993)',
+    indices: [
+      'Je suis situé dans l’État de New York, au bord d’un lac.',
+      'Des milliers de bénévoles ont participé à ma construction.',
+      'Le siège mondial s’y est installé vers 2017.',
+      'On y est venu en quittant Brooklyn. Quel est ce lieu ?'
+    ] },
+
+  { id: 'h-yankee', theme: 'Lieu', reponse: 'Yankee Stadium', accepte: ['yankee'],
+    reference: 'Prédicateurs du Royaume (1993)',
+    indices: [
+      'Une grande assemblée s’y est tenue en 1950.',
+      'La Traduction du monde nouveau des Écritures grecques y a été présentée.',
+      'En 1958, avec le stade voisin, il a accueilli plus de 250 000 personnes à l’assemblée « Volonté divine ».',
+      'C’est un célèbre stade de baseball de New York. Quel est ce lieu ?'
+    ] },
+
+  /* ------------------------------------------------------------ écoles --- */
+
+  { id: 'h-galaad', theme: 'École', reponse: 'Galaad', accepte: ['ecole de galaad', 'gilead'],
+    reference: 'Genèse 31:47, 48 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'J’ai ouvert en février 1943.',
+      'Mon nom vient d’un mot hébreu qui signifie « tas de témoignage ».',
+      'Je forme des missionnaires envoyés dans le monde entier.',
+      'Quelle est cette école ?'
+    ] },
+
+  { id: 'h-ecole-ministere', theme: 'École', reponse: 'L’École du ministère théocratique', accepte: ['ecole du ministere theocratique', 'ecole du ministere'],
+    reference: 'Prédicateurs du Royaume (1993)',
+    indices: [
+      'Elle a été créée en 1943.',
+      'Les frères y présentaient de courts exposés, puis les sœurs aussi, à partir de 1959.',
+      'On y apprenait à mieux parler en public et à enseigner.',
+      'Quelle était cette école de la congrégation ?'
+    ] },
+
+  /* ------------------------------------------------------- persécutions --- */
+
+  { id: 'h-triangle', theme: 'Persécution', reponse: 'Le triangle violet', accepte: ['triangle violet', 'triangle mauve', 'triangle'],
+    reference: 'Matthieu 5:10 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'Dans les camps de concentration nazis, chaque catégorie de prisonniers avait son signe.',
+      'Les Témoins pouvaient être libérés en signant une déclaration reniant leur foi.',
+      'Très peu l’ont signée.',
+      'Quel signe les Témoins portaient-ils sur leur uniforme ?'
+    ] },
+
+  { id: 'h-malawi', theme: 'Persécution', reponse: 'Le Malawi', accepte: ['malawi'],
+    reference: 'Jean 17:16 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'Dans les années 1960 et 1970, les Témoins y ont été cruellement persécutés.',
+      'Ils refusaient d’acheter la carte du parti politique unique.',
+      'Des milliers ont dû s’enfuir dans les pays voisins.',
+      'Le président de ce pays était Hastings Banda. Quel est ce pays ?'
+    ] },
+
+  { id: 'h-grece', theme: 'Procès', reponse: 'La Grèce', accepte: ['grece'],
+    reference: 'Actes 5:29 ; Prédicateurs du Royaume (1993)',
+    indices: [
+      'Minos Kokkinakis y a été arrêté plus de 60 fois pour « prosélytisme ».',
+      'En 1993, la Cour européenne des droits de l’homme lui a donné raison.',
+      'C’était la première victoire des Témoins devant cette cour.',
+      'Quel est ce pays ?'
+    ] },
+
+  { id: 'h-russie', theme: 'Persécution', reponse: 'La Russie', accepte: ['russie'],
+    reference: 'Jean 15:20 ; 2 Timothée 3:12',
+    indices: [
+      'En 2017, la Cour suprême de ce pays a interdit les Témoins de Jéhovah.',
+      'Le centre administratif proche de Saint-Pétersbourg a été confisqué.',
+      'Des frères y ont été condamnés à des années de prison pour leur foi.',
+      'Quel est ce pays ?'
+    ] }
+];
+
+/*
  * Félicitations lues après une bonne réponse, tirées au hasard. Elles sont
  * enregistrées avec la voix (outils/enregistrer.py) : sans prénom, donc.
  */

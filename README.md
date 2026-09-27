@@ -15,7 +15,7 @@ ligne.
 ## Comment on joue
 
 1. **Accueil** — le nombre de joueurs (1 à 8) et leurs noms, les questions
-   **Adultes** ou **Enfants** (5-10 ans) et leur nombre (5, 10, 15 ou 20).
+   **Adultes**, **Enfants** (5-10 ans) ou **Histoire** (des Témoins de Jéhovah) et leur nombre (5, 10, 15 ou 20).
    La **roue crantée** en haut à droite ouvre les réglages de la lecture à voix
    haute : marche ou arrêt, la voix (parmi les voix françaises du téléphone,
    ★ pour les voix améliorées) et sa vitesse. Tout est retenu pour la
@@ -82,6 +82,10 @@ référence :
   livres, nombres), quatre indices ;
 - `QUESTIONS_ENFANTS` — 77 questions pour les 5-10 ans, trois indices simples.
   Leurs identifiants commencent par `e-`.
+- `QUESTIONS_HISTOIRE` — 26 questions sur l'histoire des Témoins de Jéhovah
+  (présidents, noms, publications, lieux, écoles, persécutions), identifiants
+  en `h-`. Leurs références renvoient au livre *Les Témoins de Jéhovah,
+  prédicateurs du Royaume de Dieu* (1993), et à la Bible quand il y a lieu.
 
 Pour en ajouter une, copier ce modèle dans la liste :
 
