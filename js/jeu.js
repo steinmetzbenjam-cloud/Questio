@@ -19,6 +19,9 @@ const Jeu = (() => {
 
   const JOUEURS_MIN = 1;
   const JOUEURS_MAX = 8;
+  // Secondes pour répondre, une fois qu'on a buzzé.
+  const TEMPS_REPONSE = 10;
+
   // Secondes de dernière chance après la fin de la lecture.
   const DERNIERE_CHANCE = { adultes: 10, enfants: 15 };
 
@@ -708,9 +711,12 @@ const Jeu = (() => {
       });
     });
 
+    const chrono = el('div.jauge.jauge--reponse', null, [el('div.jauge__barre')]);
+
     ouvrirPanneau([
       el('p.panneau__surtitre', { texte: 'À toi de répondre' }),
       el('h2.panneau__titre', { texte: joueur.nom }),
+      chrono,
       el('div.reponse', null, [champ, micro]),
       etat,
       el('button.bouton-plein', { type: 'button', texte: 'Valider', onclick: valider }),
@@ -724,6 +730,32 @@ const Jeu = (() => {
       })
     ], rang);
     // On laisse le choix entre taper et dicter : le clavier ne s'ouvre pas d'office.
+
+    // Dix secondes pour répondre. À la fin, ce qui est écrit (ou dicté) est
+    // vérifié tel quel ; un champ vide compte comme une mauvaise réponse.
+    const debut = Date.now();
+    const barre = chrono.firstChild;
+    let dernierTic = TEMPS_REPONSE;
+    minuterieReponse = setInterval(() => {
+      const reste = Math.max(0, TEMPS_REPONSE * 1000 - (Date.now() - debut));
+      barre.style.width = (reste / (TEMPS_REPONSE * 10)) + '%';
+      chrono.classList.toggle('jauge--urgente', reste <= 3000);
+      const secondes = Math.ceil(reste / 1000);
+      if (secondes < dernierTic && secondes <= 3 && secondes > 0) Sons.tic();
+      dernierTic = secondes;
+      if (reste > 0) return;
+      arreterMinuterieReponse();
+      Dictee.arreter();
+      const saisie = champ.value.trim();
+      if (saisie) verifier(rang, saisie);
+      else mauvaiseReponse(rang, null, 'Temps écoulé !');
+    }, 100);
+  }
+
+  let minuterieReponse = null;
+  function arreterMinuterieReponse() {
+    clearInterval(minuterieReponse);
+    minuterieReponse = null;
   }
 
   function verifier(rang, saisie) {
@@ -737,7 +769,7 @@ const Jeu = (() => {
     }
   }
 
-  function mauvaiseReponse(rang, saisie) {
+  function mauvaiseReponse(rang, saisie, titre) {
     Sons.faux();
     if (navigator.vibrate) navigator.vibrate([60, 60, 60]);
     partie.bloques.add(rang);
@@ -745,7 +777,7 @@ const Jeu = (() => {
     partie.phase = 'erreur';
     ouvrirPanneau([
       el('div.verdict.verdict--faux', { texte: '✕' }),
-      el('h2.panneau__titre', { texte: saisie ? 'Ce n’est pas « ' + saisie + ' »' : 'Dommage !' }),
+      el('h2.panneau__titre', { texte: titre || (saisie ? 'Ce n’est pas « ' + saisie + ' »' : 'Dommage !') }),
       el('p.panneau__texte', {
         texte: partie.joueurs[rang].nom + ' ne peut plus buzzer sur cette question.'
       })
@@ -873,6 +905,7 @@ const Jeu = (() => {
    */
   function ouvrirPanneau(contenu, rang) {
     Dictee.arreter();
+    arreterMinuterieReponse();
     vue.panneau.innerHTML = '';
     const cote = rang === undefined ? 'bas' : COTES[rang % COTES.length];
     vue.panneau.appendChild(el('div.panneau__boite.panneau__boite--' + cote, { role: 'dialog', 'aria-modal': 'true' }, contenu));
@@ -881,6 +914,7 @@ const Jeu = (() => {
 
   function fermerPanneau() {
     Dictee.arreter();
+    arreterMinuterieReponse();
     if (!vue.panneau) return;
     vue.panneau.hidden = true;
     vue.panneau.innerHTML = '';
@@ -980,6 +1014,7 @@ const Jeu = (() => {
   }
 
   function arreterPartie() {
+    arreterMinuterieReponse();
     if (partie) Enregistrements.oublier();
     if (partie) {
       partie.jeton++;

@@ -530,6 +530,9 @@ button:disabled { cursor: default; }
   overflow: hidden;
 }
 
+.jauge--reponse { margin: -4px 0 14px; }
+.jauge--urgente .jauge__barre { background: var(--rouge); }
+
 .jauge__barre { height: 100%; width: 100%; background: var(--or); transition: width .1s linear; }
 
 /* — panneau superposé (qui, réponse, résultat) — */
