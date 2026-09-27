@@ -1,16 +1,57 @@
 /*
  * Questio — la voix et les sons.
  *
- * La lecture passe par la synthèse vocale du téléphone (voix française).
+ * Par défaut, les questions sont lues par des enregistrements faits sur un
+ * Mac avec une belle voix (audio/, voir outils/enregistrer.py) : la même voix
+ * sur tous les téléphones. On peut aussi choisir une voix du téléphone
+ * (synthèse vocale), qui sert de toute façon de repli si un enregistrement
+ * manque.
  * Chaque indice est une phrase courte, lue d'un seul tenant : on peut ainsi
  * l'interrompre au buzzer et la reprendre proprement au début de l'indice.
  *
  * Sans synthèse vocale (ou voix coupée), la lecture est simulée au rythme
  * d'une voix : le texte s'affiche et le jeu se déroule de la même façon.
  */
+/* ------------------------------------------------------- enregistrements --- */
+
+/*
+ * Les fichiers audio sont chargés en mémoire (Blob) avant d'être joués :
+ * Safari lit mal un son servi par le cache hors ligne, un Blob jamais.
+ */
+const Enregistrements = (() => {
+  const charges = new Map(); // nom → Promise<adresse locale | null>
+
+  function adresse(nom) {
+    if (!charges.has(nom)) {
+      charges.set(nom, fetch('audio/' + nom + '.m4a')
+        .then(r => (r.ok ? r.blob() : null))
+        .then(b => (b ? URL.createObjectURL(b) : null))
+        .catch(() => null));
+    }
+    return charges.get(nom);
+  }
+
+  /** Charge d'avance les sons d'une partie, pour ne jamais attendre. */
+  function precharger(noms) {
+    noms.forEach(adresse);
+  }
+
+  function oublier() {
+    for (const promesse of charges.values()) promesse.then(u => { if (u) URL.revokeObjectURL(u); });
+    charges.clear();
+  }
+
+  return { adresse, precharger, oublier };
+})();
+
 const Voix = (() => {
 
+  const ENREGISTREE = 'enregistree'; // la voix enregistrée (Audrey)
+  const NOM_ENREGISTREE = 'Audrey';
+
   const synthese = 'speechSynthesis' in window ? window.speechSynthesis : null;
+  const lecteur = new Audio();
+  lecteur.preload = 'auto';
   let voixChoisie = null;
   let preference = null;   // identifiant de la voix choisie par l'utilisateur
   let enCours = null;      // résolution de la phrase en cours de lecture
@@ -59,13 +100,18 @@ const Voix = (() => {
     });
   }
 
-  /** Retient la voix voulue (null : la meilleure disponible). */
+  /** Retient la voix voulue (null : la voix enregistrée). */
   function utiliser(identifiant) {
     preference = identifiant || null;
     choisirVoix();
   }
 
+  function enregistree() {
+    return !preference || preference === ENREGISTREE;
+  }
+
   function actuelle() {
+    if (enregistree()) return ENREGISTREE;
     return voixChoisie ? voixChoisie.voiceURI : null;
   }
 
@@ -77,15 +123,37 @@ const Voix = (() => {
     abonnes.push(fonction);
   }
 
+  /** Une lecture à voix haute est possible : enregistrements ou synthèse. */
   function disponible() {
-    return !!synthese;
+    return true;
+  }
+
+  /** Un court silence au format WAV, pour débloquer le lecteur audio. */
+  let silence = null;
+  function adresseSilence() {
+    if (silence) return silence;
+    const echantillons = 800; // 0,05 s à 16 kHz
+    const octets = new DataView(new ArrayBuffer(44 + echantillons * 2));
+    const ecrire = (pos, texte) => { for (let i = 0; i < texte.length; i++) octets.setUint8(pos + i, texte.charCodeAt(i)); };
+    ecrire(0, 'RIFF'); octets.setUint32(4, 36 + echantillons * 2, true); ecrire(8, 'WAVE');
+    ecrire(12, 'fmt '); octets.setUint32(16, 16, true); octets.setUint16(20, 1, true); octets.setUint16(22, 1, true);
+    octets.setUint32(24, 16000, true); octets.setUint32(28, 32000, true); octets.setUint16(32, 2, true); octets.setUint16(34, 16, true);
+    ecrire(36, 'data'); octets.setUint32(40, echantillons * 2, true);
+    silence = URL.createObjectURL(new Blob([octets], { type: 'audio/wav' }));
+    return silence;
   }
 
   /**
-   * iOS n'accepte de parler qu'après un geste de l'utilisateur : on prononce
-   * un silence au premier toucher pour débloquer la voix.
+   * iOS n'accepte de jouer un son ou de parler qu'après un geste de
+   * l'utilisateur : au premier toucher, on joue un silence sur le lecteur
+   * et on prononce un silence, ce qui les débloque pour la suite.
    */
   function debloquer() {
+    try {
+      lecteur.src = adresseSilence();
+      const essai = lecteur.play();
+      if (essai) essai.catch(() => {});
+    } catch (e) { /* pas de lecteur audio */ }
     if (!synthese) return;
     const vide = new SpeechSynthesisUtterance(' ');
     vide.volume = 0;
@@ -100,7 +168,8 @@ const Voix = (() => {
 
   /**
    * Lit une phrase. La promesse vaut vrai si la phrase a été lue jusqu'au
-   * bout, faux si elle a été interrompue.
+   * bout, faux si elle a été interrompue. Avec `enregistrement`, et la voix
+   * enregistrée choisie, c'est le fichier audio de ce nom qui est joué.
    */
   function dire(texte, options) {
     const reglages = options || {};
@@ -116,32 +185,62 @@ const Voix = (() => {
       };
       enCours = conclure;
 
-      if (!synthese || reglages.muet) {
+      // Sans voix : on simule le temps de lecture, le texte s'affiche.
+      const simuler = () => {
+        clearTimeout(minuterie);
         minuterie = setTimeout(() => conclure(true), duree(texte, vitesse));
+      };
+
+      const parler = () => {
+        if (fini) return;
+        if (!synthese) { simuler(); return; }
+        const phrase = new SpeechSynthesisUtterance(texte);
+        phrase.lang = 'fr-FR';
+        if (voixChoisie) phrase.voice = voixChoisie;
+        phrase.rate = vitesse;
+        phrase.onend = () => conclure(true);
+        phrase.onerror = () => conclure(false);
+        // Garde-fou : certains navigateurs oublient d'annoncer la fin.
+        clearTimeout(minuterie);
+        minuterie = setTimeout(() => conclure(true), duree(texte, vitesse) * 2.5 + 3000);
+        // Chrome ignore parfois une phrase lancée juste après une coupure.
+        setTimeout(() => { if (!fini) synthese.speak(phrase); }, 40);
+      };
+
+      if (reglages.muet) { simuler(); return; }
+
+      if (reglages.enregistrement && enregistree()) {
+        minuterie = setTimeout(() => conclure(true), duree(texte, vitesse) * 2.5 + 5000);
+        Enregistrements.adresse(reglages.enregistrement).then(adresse => {
+          if (fini) return;
+          if (!adresse) { parler(); return; } // enregistrement absent : la voix du téléphone
+          lecteur.onended = () => conclure(true);
+          lecteur.onerror = () => parler();
+          lecteur.src = adresse;
+          lecteur.playbackRate = vitesse;
+          const lecture = lecteur.play();
+          if (lecture) lecture.catch(() => parler());
+        });
         return;
       }
 
-      const phrase = new SpeechSynthesisUtterance(texte);
-      phrase.lang = 'fr-FR';
-      if (voixChoisie) phrase.voice = voixChoisie;
-      phrase.rate = vitesse;
-      phrase.onend = () => conclure(true);
-      phrase.onerror = () => conclure(false);
-      // Garde-fou : certains navigateurs oublient d'annoncer la fin.
-      minuterie = setTimeout(() => conclure(true), duree(texte, vitesse) * 2.5 + 3000);
-      // Chrome ignore parfois une phrase lancée juste après une coupure.
-      setTimeout(() => { if (!fini) synthese.speak(phrase); }, 40);
+      parler();
     });
   }
 
   /** Coupe net la lecture en cours. */
   function taire() {
     clearTimeout(minuterie);
+    lecteur.onended = lecteur.onerror = null;
+    try { lecteur.pause(); } catch (e) { /* rien à couper */ }
     if (synthese) synthese.cancel();
     if (enCours) enCours(false);
   }
 
-  return { disponible, debloquer, dire, taire, liste, utiliser, actuelle, reglerVitesse, surChangement };
+  return {
+    ENREGISTREE, NOM_ENREGISTREE,
+    disponible, debloquer, dire, taire, liste, utiliser, actuelle, enregistree, reglerVitesse, surChangement
+  };
 })();
 
 /* ------------------------------------------------------------------ sons --- */

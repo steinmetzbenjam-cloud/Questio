@@ -27,10 +27,17 @@ const Jeu = (() => {
     nbQuestions: 10,
     public: 'adultes', // ou « enfants » : questionnaire des 5-10 ans
     voix: true,
-    voixNom: null,   // null : la meilleure voix française du téléphone
+    voixNom: null,   // null : la voix enregistrée (Audrey)
     vitesse: 1
   }, memoire.lire('reglages', {}));
 
+  // Version 14 : la voix enregistrée (Audrey) devient la voix par défaut,
+  // même pour qui avait choisi une voix du téléphone auparavant.
+  if ((reglages.voixVersion || 0) < 2) {
+    reglages.voixNom = null;
+    reglages.voixVersion = 2;
+    memoire.ecrire('reglages', reglages);
+  }
   Voix.utiliser(reglages.voixNom);
   Voix.reglerVitesse(reglages.vitesse);
 
@@ -239,7 +246,7 @@ const Jeu = (() => {
   function reglagesVoix() {
     const essayer = () => {
       Voix.debloquer();
-      Voix.dire('Bienvenue dans Questio ! Je suis né à Tarse. Qui suis-je ?');
+      Voix.dire('Bienvenue dans Questio ! Je suis né à Tarse. Qui suis-je ?', { enregistrement: 'essai' });
     };
 
     const bloc = el('div.voix');
@@ -255,6 +262,11 @@ const Jeu = (() => {
     function remplirMenu() {
       const voix = Voix.liste();
       menu.innerHTML = '';
+      // En tête, la voix enregistrée : la même sur tous les téléphones.
+      menu.appendChild(el('option', {
+        value: Voix.ENREGISTREE,
+        texte: Voix.NOM_ENREGISTREE + ' — voix enregistrée ★'
+      }));
       for (const v of voix) {
         const region = REGIONS[(v.lang.split(/[-_]/)[1] || '').toUpperCase()];
         menu.appendChild(el('option', {
@@ -263,8 +275,7 @@ const Jeu = (() => {
             + (/premium|enhanced|améliorée|natural|neural/i.test(v.name) ? ' ★' : '')
         }));
       }
-      menu.value = Voix.actuelle() || '';
-      ligneMenu.hidden = voix.length < 2;
+      menu.value = Voix.actuelle() || Voix.ENREGISTREE;
     }
 
     const ligneMenu = el('label.voix__ligne', null, [el('span.voix__etiquette', { texte: 'Voix' }), menu]);
@@ -290,8 +301,8 @@ const Jeu = (() => {
     bloc.appendChild(ligneMenu);
     bloc.appendChild(el('div.voix__ligne', null, [el('span.voix__etiquette', { texte: 'Vitesse' }), vitesses]));
     bloc.appendChild(el('p.bascule__aide', {
-      texte: 'Le téléphone ne partage pas toutes ses voix avec les applications web : les voix Siri n’y sont jamais. '
-        + 'Une voix « améliorée » téléchargée dans les réglages peut apparaître après avoir fermé et rouvert Questio.'
+      texte: 'Audrey est une voix enregistrée à l’avance : elle est la même sur tous les téléphones, même hors ligne. '
+        + 'Les autres voix sont celles que le téléphone partage avec les applications web.'
     }));
     bloc.appendChild(el('button.lien-bouton', { type: 'button', texte: 'Tester la voix', onclick: essayer }));
     if (!Voix.disponible()) bloc.hidden = true;
@@ -349,10 +360,17 @@ const Jeu = (() => {
     if (reglages.voix) Voix.debloquer();
     garderEcranAllume();
 
+    const questions = tirerQuestions(reglages.nbQuestions);
+    // Les enregistrements de la partie se chargent pendant qu'on joue.
+    if (reglages.voix && Voix.enregistree()) {
+      Enregistrements.precharger(questions.flatMap(q =>
+        q.indices.map((_, i) => q.id + '-' + (i + 1)).concat([q.id + '-bravo', q.id + '-reponse'])));
+    }
+
     partie = {
       enfants: reglages.public === 'enfants',
       joueurs: nomsDesJoueurs().map(nom => ({ nom, points: 0 })),
-      questions: tirerQuestions(reglages.nbQuestions),
+      questions,
       rang: -1,
       segment: 0,
       bloques: new Set(),
@@ -511,7 +529,10 @@ const Jeu = (() => {
     partie.phase = 'lecture';
     while (partie.segment < q.indices.length) {
       dessinerTexte();
-      const complet = await Voix.dire(q.indices[partie.segment], { muet: !reglages.voix });
+      const complet = await Voix.dire(q.indices[partie.segment], {
+        muet: !reglages.voix,
+        enregistrement: q.id + '-' + (partie.segment + 1)
+      });
       if (!partie || jeton !== partie.jeton) return; // interrompu par le buzzer
       if (!complet && reglages.voix) {
         // La voix a échoué : on laisse le temps de lire à l'écran.
@@ -752,7 +773,8 @@ const Jeu = (() => {
     if (reglages.voix) {
       Voix.dire(gagnant === null
         ? 'La réponse était : ' + q.reponse + '.'
-        : 'Bravo ' + partie.joueurs[gagnant].nom + ' ! C’était ' + q.reponse + '.');
+        : 'Bravo ' + partie.joueurs[gagnant].nom + ' ! C’était ' + q.reponse + '.',
+      { enregistrement: q.id + (gagnant === null ? '-reponse' : '-bravo') });
     }
   }
 
@@ -892,14 +914,21 @@ const Jeu = (() => {
       type: 'button', texte: 'Changer les joueurs', onclick: accueil
     }));
 
-    if (reglages.voix && meilleur > 0) {
-      Voix.dire(champions.length > 1
-        ? 'Égalité ! Bravo ' + champions.map(j => j.nom).join(' et ') + ' !'
-        : 'Bravo ' + champions[0].nom + ', tu remportes la partie !');
+    if (reglages.voix) {
+      // La voix enregistrée ne connaît pas les prénoms : une phrase générale.
+      if (meilleur === 0) {
+        Voix.dire('Partie terminée ! La prochaine sera la bonne.', { enregistrement: 'fin-personne' });
+      } else {
+        Voix.dire(champions.length > 1
+          ? 'Égalité ! Bravo ' + champions.map(j => j.nom).join(' et ') + ' !'
+          : 'Bravo ' + champions[0].nom + ', tu remportes la partie !',
+        { enregistrement: 'fin' });
+      }
     }
   }
 
   function arreterPartie() {
+    if (partie) Enregistrements.oublier();
     if (partie) {
       partie.jeton++;
       arreterCompte();

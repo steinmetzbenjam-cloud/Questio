@@ -94,6 +94,31 @@ Pour en ajouter une, copier ce modèle dans la liste :
 - des phrases courtes : chacune est lue d'un seul tenant, et c'est au début de
   la phrase interrompue que la lecture reprend.
 
+**Après tout ajout ou toute correction, réenregistrer la voix** (voir
+ci-dessous) : sans enregistrement, la question est lue par la voix du
+téléphone.
+
+## La voix enregistrée
+
+Les questions sont lues par **Audrey (Premium)**, une voix de macOS
+enregistrée à l'avance dans [`audio/`](audio) : la même belle voix sur tous les
+téléphones, même hors ligne. Chaque indice est un fichier, ainsi que les phrases
+« Bonne réponse ! C'était… » et « La réponse était… » de chaque question.
+
+```bash
+python3 outils/enregistrer.py
+```
+
+Le script lit `js/questions.js`, n'enregistre que les phrases nouvelles ou
+modifiées (`audio/index.json` en garde la trace) et retire celles qui ne
+servent plus. Il faut un Mac avec la voix installée : Réglages Système →
+Accessibilité → Contenu énoncé → Voix du système → Gérer les voix… →
+Français → Audrey (Premium). Une autre voix : `--voix "Thomas"`.
+
+Dans le jeu, les enregistrements d'une partie se chargent au lancement. Les
+Réglages permettent aussi de choisir une voix du téléphone à la place ; elle
+sert de toute façon de repli si un enregistrement manque.
+
 ## Installation
 
 ### Sur iPhone / iPad
@@ -130,8 +155,10 @@ js/ui.js                création d'éléments, mémoire locale
 js/bible.js             les 66 livres, liens JW Library et jw.org (repris de Vox)
 js/questions.js         le questionnaire
 js/reponse.js           vérification tolérante des réponses
-js/voix.js              lecture à voix haute et petits sons
+js/voix.js              voix enregistrée, voix du téléphone, dictée, petits sons
 js/jeu.js               les écrans et le déroulement d'une partie
 js/app.js               démarrage
 assets/                 icônes
+audio/                  la voix enregistrée (un fichier par phrase)
+outils/enregistrer.py   enregistre les questions avec une voix du Mac
 ```
