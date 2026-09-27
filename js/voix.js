@@ -132,33 +132,56 @@ const Sortie = (() => {
 /* ------------------------------------------------------- enregistrements --- */
 
 /*
- * Les fichiers audio sont chargés en mémoire (Blob) avant d'être joués :
- * Safari lit mal un son servi par le cache hors ligne, un Blob jamais.
+ * Chaque phrase d'Audrey est téléchargée, décodée, puis jouée directement
+ * par le moteur audio (et non par un lecteur audio branché dessus : sur
+ * iPhone, ce montage rendait la voix sourde après une coupure).
  */
 const Enregistrements = (() => {
-  const charges = new Map(); // nom → Promise<adresse locale | null>
+  const octets = new Map();  // nom → Promise<ArrayBuffer | null>
+  const tampons = new Map(); // nom → Promise<AudioBuffer | null>
 
-  function adresse(nom) {
-    if (!charges.has(nom)) {
-      charges.set(nom, fetch('audio/' + nom + '.m4a')
-        .then(r => (r.ok ? r.blob() : null))
-        .then(b => (b ? URL.createObjectURL(b) : null))
+  function charger(nom) {
+    if (!octets.has(nom)) {
+      octets.set(nom, fetch('audio/' + nom + '.m4a')
+        .then(r => (r.ok ? r.arrayBuffer() : null))
         .catch(() => null));
     }
-    return charges.get(nom);
+    return octets.get(nom);
   }
 
-  /** Charge d'avance les sons d'une partie, pour ne jamais attendre. */
+  function decoder(contexte, donnees) {
+    return new Promise(resoudre => {
+      try {
+        // Forme à rappels : les anciens Safari ne renvoient pas de promesse.
+        const p = contexte.decodeAudioData(donnees, resoudre, () => resoudre(null));
+        if (p && p.catch) p.catch(() => resoudre(null));
+      } catch (e) {
+        resoudre(null);
+      }
+    });
+  }
+
+  /** Le son décodé, prêt à jouer (null s'il manque). */
+  function tampon(nom) {
+    const contexte = Sortie.contexte();
+    if (!contexte) return Promise.resolve(null);
+    if (!tampons.has(nom)) {
+      tampons.set(nom, charger(nom).then(d => (d ? decoder(contexte, d.slice(0)) : null)));
+    }
+    return tampons.get(nom);
+  }
+
+  /** Charge (et décode si possible) d'avance les sons d'une partie. */
   function precharger(noms) {
-    noms.forEach(adresse);
+    noms.forEach(nom => (Sortie.contexte() ? tampon(nom) : charger(nom)));
   }
 
   function oublier() {
-    for (const promesse of charges.values()) promesse.then(u => { if (u) URL.revokeObjectURL(u); });
-    charges.clear();
+    octets.clear();
+    tampons.clear();
   }
 
-  return { adresse, precharger, oublier };
+  return { tampon, precharger, oublier };
 })();
 
 const Voix = (() => {
@@ -168,20 +191,7 @@ const Voix = (() => {
 
   const synthese = 'speechSynthesis' in window ? window.speechSynthesis : null;
 
-  // Un seul lecteur, branché sur le moteur audio : c'est lui qui porte le
-  // volume réglable de Questio.
-  const lecteur = new Audio();
-  lecteur.preload = 'auto';
-  let lecteurBranche = false;
-
-  function brancherLecteur() {
-    const ctx = Sortie.preparer();
-    if (!ctx || lecteurBranche) return;
-    try {
-      ctx.createMediaElementSource(lecteur).connect(Sortie.entree());
-      lecteurBranche = true;
-    } catch (e) { /* sans moteur audio, le lecteur joue directement */ }
-  }
+  let sourceEnCours = null; // phrase d'Audrey en train d'être jouée
   let voixChoisie = null;
   let preference = null;   // identifiant de la voix choisie par l'utilisateur
   let enCours = null;      // résolution de la phrase en cours de lecture
@@ -258,37 +268,25 @@ const Voix = (() => {
     return true;
   }
 
-  /** Un court silence au format WAV, pour débloquer le lecteur audio. */
-  let silence = null;
-  function adresseSilence() {
-    if (silence) return silence;
-    const echantillons = 800; // 0,05 s à 16 kHz
-    const octets = new DataView(new ArrayBuffer(44 + echantillons * 2));
-    const ecrire = (pos, texte) => { for (let i = 0; i < texte.length; i++) octets.setUint8(pos + i, texte.charCodeAt(i)); };
-    ecrire(0, 'RIFF'); octets.setUint32(4, 36 + echantillons * 2, true); ecrire(8, 'WAVE');
-    ecrire(12, 'fmt '); octets.setUint32(16, 16, true); octets.setUint16(20, 1, true); octets.setUint16(22, 1, true);
-    octets.setUint32(24, 16000, true); octets.setUint32(28, 32000, true); octets.setUint16(32, 2, true); octets.setUint16(34, 16, true);
-    ecrire(36, 'data'); octets.setUint32(40, echantillons * 2, true);
-    silence = URL.createObjectURL(new Blob([octets], { type: 'audio/wav' }));
-    return silence;
-  }
-
   /**
-   * iOS n'accepte de jouer un son ou de parler qu'après un geste de
-   * l'utilisateur : au premier toucher, on joue un silence sur le lecteur
-   * et on prononce un silence, ce qui les débloque pour la suite.
+   * iOS n'accepte de jouer un son qu'après un geste de l'utilisateur : au
+   * premier toucher, on crée le moteur et on y joue un silence, ce qui le
+   * débloque pour la suite.
    */
   function debloquer() {
-    brancherLecteur();
+    const contexte = Sortie.preparer();
     Sortie.reveiller();
-    try {
-      lecteur.src = adresseSilence();
-      const essai = lecteur.play();
-      if (essai) essai.catch(() => {});
-    } catch (e) { /* pas de lecteur audio */ }
+    if (contexte) {
+      try {
+        const source = contexte.createBufferSource();
+        source.buffer = contexte.createBuffer(1, 1, 22050);
+        source.connect(contexte.destination);
+        source.start(0);
+      } catch (e) { /* rien à débloquer */ }
+    }
     // Avec la voix enregistrée, on ne réveille pas la voix du téléphone :
     // pendant qu'elle parle, même un silence, iOS baisse le son des autres
-    // lectures, et Audrey démarrait trop bas.
+    // lectures.
     if (!synthese || enregistree()) return;
     const vide = new SpeechSynthesisUtterance(' ');
     vide.volume = 0;
@@ -347,19 +345,24 @@ const Voix = (() => {
 
       if (reglages.enregistrement && enregistree()) {
         minuterie = setTimeout(() => conclure(true), duree(texte, vitesse) * 2.5 + 5000);
-        Enregistrements.adresse(reglages.enregistrement).then(adresse => {
+        // Le moteur doit tourner avant de jouer, sinon la phrase serait muette.
+        Promise.all([Enregistrements.tampon(reglages.enregistrement), Sortie.pret()]).then(([son]) => {
           if (fini) return;
-          if (!adresse) { parler(); return; } // enregistrement absent : la voix du téléphone
-          // Le moteur doit tourner avant de jouer, sinon la phrase serait muette.
-          Sortie.pret().then(() => {
-            if (fini) return;
-            lecteur.onended = () => conclure(true);
-            lecteur.onerror = () => parler();
-            lecteur.src = adresse;
-            lecteur.playbackRate = vitesse;
-            const lecture = lecteur.play();
-            if (lecture) lecture.catch(() => parler());
-          });
+          const contexte = Sortie.contexte();
+          if (!son || !contexte) { parler(); return; } // enregistrement absent : la voix du téléphone
+          const source = contexte.createBufferSource();
+          source.buffer = son;
+          source.playbackRate.value = vitesse;
+          source.connect(Sortie.entree());
+          source.onended = () => {
+            if (sourceEnCours !== source) return;
+            sourceEnCours = null;
+            conclure(true);
+          };
+          sourceEnCours = source;
+          clearTimeout(minuterie);
+          minuterie = setTimeout(() => conclure(true), (son.duration / vitesse) * 1000 + 4000);
+          source.start();
         });
         return;
       }
@@ -371,9 +374,15 @@ const Voix = (() => {
   /** Coupe net la lecture en cours. */
   function taire() {
     clearTimeout(minuterie);
-    lecteur.onended = lecteur.onerror = null;
-    try { lecteur.pause(); } catch (e) { /* rien à couper */ }
-    if (synthese) synthese.cancel();
+    if (sourceEnCours) {
+      const source = sourceEnCours;
+      sourceEnCours = null;
+      source.onended = null;
+      try { source.stop(); } catch (e) { /* déjà arrêtée */ }
+    }
+    // On ne touche à la voix du téléphone que si elle parle : sur iPhone,
+    // même un simple « arrêter » peut baisser le son des autres lectures.
+    if (synthese && (synthese.speaking || synthese.pending)) synthese.cancel();
     if (enCours) enCours(false);
   }
 
