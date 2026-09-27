@@ -21,7 +21,9 @@ ligne.
    ★ pour les voix améliorées) et sa vitesse. Tout est retenu pour la
    prochaine fois.
 2. **Lancer la partie.** Chaque question se lit **indice par indice**, du plus
-   difficile au plus facile. Le texte s'affiche au fil de la lecture.
+   difficile au plus facile. Pendant la lecture à voix haute, le texte reste
+   caché (celui qui a l'écran dans son sens serait avantagé) : il apparaît avec
+   la réponse. Voix coupée, le texte s'affiche au fil de la lecture.
 3. **BUZZ !** Le téléphone est posé au milieu de la table et **chaque joueur a
    son propre buzzer**, de sa couleur, sur le bord qui lui fait face et écrit
    dans son sens : joueur 1 en bas, 2 en haut (retourné), 3 à gauche, 4 à

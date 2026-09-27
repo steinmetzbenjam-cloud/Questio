@@ -457,7 +457,7 @@ button:disabled { cursor: default; }
 }
 
 .scene__theme {
-  align-self: flex-start;
+  align-self: center;
   margin-bottom: 14px;
   padding: 4px 12px;
   border-radius: 999px;
@@ -485,6 +485,42 @@ button:disabled { cursor: default; }
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: none; }
 }
+
+/* — pendant la lecture à voix haute : rien à lire, juste l'écoute — */
+
+.ecoute { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 10px 0; }
+
+.ecoute__ondes { display: flex; align-items: center; gap: 6px; height: 46px; }
+
+.ecoute__ondes span {
+  width: 7px;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--or);
+  animation: onde 1s ease-in-out infinite;
+}
+
+.ecoute__ondes span:nth-child(2) { animation-delay: .15s; }
+.ecoute__ondes span:nth-child(3) { animation-delay: .3s; }
+.ecoute__ondes span:nth-child(4) { animation-delay: .45s; }
+.ecoute__ondes span:nth-child(5) { animation-delay: .6s; }
+
+@keyframes onde {
+  0%, 100% { transform: scaleY(.25); }
+  50%      { transform: scaleY(1); }
+}
+
+.ecoute--fin .ecoute__ondes span { animation: none; transform: scaleY(.25); background: var(--doux); }
+
+.ecoute__etat {
+  margin: 0;
+  font-family: var(--titre);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--doux);
+}
+
+.ecoute--fin .ecoute__etat { color: var(--or); }
 
 .jauge {
   height: 8px;

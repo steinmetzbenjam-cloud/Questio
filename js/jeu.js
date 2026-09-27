@@ -483,6 +483,21 @@ const Jeu = (() => {
   function dessinerTexte() {
     const q = partie.questions[partie.rang];
     vue.texte.innerHTML = '';
+
+    // Avec la voix, le texte reste caché jusqu'à la réponse : sinon, celui qui
+    // a l'écran dans son sens lirait plus vite que les autres.
+    if (reglages.voix && partie.phase !== 'resultat') {
+      const attente = partie.phase === 'attente';
+      vue.texte.appendChild(el('div.ecoute' + (attente ? '.ecoute--fin' : ''), null, [
+        el('div.ecoute__ondes', { 'aria-hidden': 'true' }, [el('span'), el('span'), el('span'), el('span'), el('span')]),
+        el('p.ecoute__etat', {
+          texte: attente ? 'Dernière chance !'
+            : 'Indice ' + Math.min(partie.segment + 1, q.indices.length) + ' / ' + q.indices.length
+        })
+      ]));
+      return;
+    }
+
     const derniere = partie.phase === 'resultat' ? q.indices.length - 1 : partie.segment;
     q.indices.forEach((indice, rang) => {
       if (rang > derniere) return;
@@ -560,6 +575,7 @@ const Jeu = (() => {
 
   function derniereChance(duree) {
     partie.phase = 'attente';
+    dessinerTexte();
     const debut = Date.now();
     vue.jauge.hidden = false;
     const barre = vue.jauge.firstChild;
