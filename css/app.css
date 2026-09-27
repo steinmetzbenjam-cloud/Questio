@@ -602,7 +602,42 @@ button:disabled { cursor: default; }
 
 .solution__etiquette { font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--doux); }
 .solution__mot { font-family: var(--titre); font-size: 1.6rem; font-weight: 800; color: var(--or); }
-.solution__reference { font-size: .85rem; color: var(--doux); }
+.solution__references {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.reference {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--bord);
+  border-radius: 999px;
+  background: var(--carte);
+  font-size: .85rem;
+  color: var(--doux);
+  overflow: hidden;
+}
+
+.reference > span, .reference:not(:has(a)) { padding: 5px 10px; }
+
+.reference__lien {
+  padding: 5px 8px 5px 12px;
+  color: var(--or);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.reference__web {
+  padding: 5px 10px 5px 8px;
+  border-left: 1px solid var(--bord);
+  color: var(--doux);
+  text-decoration: none;
+}
+
+.reference__lien:active, .reference__web:active { background: var(--carte-claire); }
 
 .modale {
   position: fixed;

@@ -581,7 +581,7 @@ const QUESTIONS = [
     ] },
 
   { id: 'psaumes', theme: 'Livre', reponse: 'Psaumes', accepte: ['psaume', 'les psaumes'],
-    reference: 'Psaume 23:1 ; 119',
+    reference: 'Psaume 23:1 ; 119:176',
     indices: [
       'Mon plus long chapitre compte 176 versets.',
       'Je suis le livre de la Bible qui a le plus de chapitres.',

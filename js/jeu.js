@@ -700,7 +700,7 @@ const Jeu = (() => {
       el('div.solution', null, [
         el('span.solution__etiquette', { texte: 'La réponse' }),
         el('span.solution__mot', { texte: q.reponse }),
-        el('span.solution__reference', { texte: q.reference })
+        liensReferences(q.reference)
       ]),
       el('button.bouton-plein', {
         type: 'button',
@@ -714,6 +714,41 @@ const Jeu = (() => {
         ? 'La réponse était : ' + q.reponse + '.'
         : 'Bravo ' + partie.joueurs[gagnant].nom + ' ! C’était ' + q.reponse + '.');
     }
+  }
+
+  /**
+   * Les références deviennent des liens : le nom ouvre JW Library au bon
+   * verset, la petite flèche ouvre le même passage sur jw.org.
+   * « Exode 2:10 ; 3:1-10 » : un passage sans nom de livre garde le précédent.
+   */
+  function liensReferences(reference) {
+    const conteneur = el('span.solution__references');
+    let livre = null;
+    for (const morceau of String(reference || '').split(';').map(m => m.trim()).filter(Boolean)) {
+      let ref = Bible.analyser(morceau);
+      if (!ref && livre && /^\d/.test(morceau)) ref = Bible.analyser(Bible.nomLivre(livre) + ' ' + morceau);
+      if (!ref) {
+        conteneur.appendChild(el('span.reference', { texte: morceau }));
+        continue;
+      }
+      livre = ref.livre;
+      conteneur.appendChild(el('span.reference', null, [
+        el('a.reference__lien', {
+          href: Bible.lienApplication(ref),
+          texte: Bible.formater(ref),
+          title: 'Ouvrir dans JW Library'
+        }),
+        el('a.reference__web', {
+          href: Bible.lienWeb(ref),
+          target: '_blank',
+          rel: 'noopener',
+          texte: '↗',
+          title: 'Ouvrir sur jw.org',
+          'aria-label': 'Ouvrir ' + Bible.formater(ref) + ' sur jw.org'
+        })
+      ]));
+    }
+    return conteneur;
   }
 
   /* — panneau superposé — */

@@ -29,7 +29,9 @@ ligne.
    dictée, si l'une des transcriptions proposées par le téléphone est la bonne
    réponse, elle est validée d'elle-même ; sinon le texte reste dans le champ
    pour être corrigé.
-   - **Juste** : un point, la réponse et sa référence biblique s'affichent.
+   - **Juste** : un point, la réponse et ses références bibliques s'affichent.
+     Chaque référence ouvre **JW Library** au bon verset ; la petite flèche ↗
+     ouvre le même passage sur **jw.org**.
    - **Faux** : il ne peut plus buzzer sur cette question, et la lecture reprend
      au début de l'indice interrompu.
 5. Quand tout est lu, **dix secondes de dernière chance**. Personne ? La réponse
@@ -119,6 +121,7 @@ manifest.webmanifest    installation sur l'écran d'accueil
 sw.js                   cache hors ligne
 css/app.css             toute la mise en forme
 js/ui.js                création d'éléments, mémoire locale
+js/bible.js             les 66 livres, liens JW Library et jw.org (repris de Vox)
 js/questions.js         le questionnaire
 js/reponse.js           vérification tolérante des réponses
 js/voix.js              lecture à voix haute et petits sons

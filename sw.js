@@ -4,7 +4,7 @@
  * l'installation.
  */
 
-const CACHE = 'questio-v7';
+const CACHE = 'questio-v8';
 
 const COQUILLE = [
   './',
@@ -12,6 +12,7 @@ const COQUILLE = [
   './manifest.webmanifest',
   './css/app.css',
   './js/ui.js',
+  './js/bible.js',
   './js/questions.js',
   './js/reponse.js',
   './js/voix.js',
