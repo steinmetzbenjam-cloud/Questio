@@ -31,7 +31,9 @@ ligne.
    dictée, si l'une des transcriptions proposées par le téléphone est la bonne
    réponse, elle est validée d'elle-même ; sinon le texte reste dans le champ
    pour être corrigé.
-   - **Juste** : un point, la réponse et ses références bibliques s'affichent.
+   - **Juste** : un point, une félicitation tirée au hasard parmi douze
+     (« Digne des Béréens ! », « Sage comme Salomon ! »…), puis la réponse et
+     ses références bibliques.
      Chaque référence ouvre **JW Library** au bon verset ; la petite flèche ↗
      ouvre le même passage sur **jw.org**.
    - **Faux** : il ne peut plus buzzer sur cette question, et la lecture reprend
@@ -103,7 +105,8 @@ téléphone.
 Les questions sont lues par **Audrey (Premium)**, une voix de macOS
 enregistrée à l'avance dans [`audio/`](audio) : la même belle voix sur tous les
 téléphones, même hors ligne. Chaque indice est un fichier, ainsi que les phrases
-« Bonne réponse ! C'était… » et « La réponse était… » de chaque question.
+« C'était… » et « La réponse était… » de chaque question, et les
+félicitations (`FELICITATIONS`, à la fin de `js/questions.js`).
 
 ```bash
 python3 outils/enregistrer.py

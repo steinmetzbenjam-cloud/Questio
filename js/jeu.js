@@ -364,7 +364,8 @@ const Jeu = (() => {
     // Les enregistrements de la partie se chargent pendant qu'on joue.
     if (reglages.voix && Voix.enregistree()) {
       Enregistrements.precharger(questions.flatMap(q =>
-        q.indices.map((_, i) => q.id + '-' + (i + 1)).concat([q.id + '-bravo', q.id + '-reponse'])));
+        q.indices.map((_, i) => q.id + '-' + (i + 1)).concat([q.id + '-bravo', q.id + '-reponse']))
+        .concat(FELICITATIONS.map((_, i) => 'felicitations-' + (i + 1))));
     }
 
     partie = {
@@ -744,6 +745,7 @@ const Jeu = (() => {
     dessinerTexte();
     const q = partie.questions[partie.rang];
     const derniere = partie.rang === partie.questions.length - 1;
+    const felicitation = gagnant === null ? -1 : tirerFelicitation();
 
     const contenu = gagnant === null
       ? [
@@ -752,8 +754,8 @@ const Jeu = (() => {
       ]
       : [
         el('div.verdict.verdict--juste', { texte: '✓' }),
-        el('h2.panneau__titre', { texte: 'Bravo ' + partie.joueurs[gagnant].nom + ' !' }),
-        el('p.panneau__texte', { texte: '+1 point' })
+        el('h2.panneau__titre', { texte: FELICITATIONS[felicitation] }),
+        el('p.panneau__texte', { texte: partie.joueurs[gagnant].nom + ' marque un point' })
       ];
 
     ouvrirPanneau(contenu.concat([
@@ -770,12 +772,28 @@ const Jeu = (() => {
     // Tournée vers le gagnant : c'est lui qui passe à la question suivante.
     ]), gagnant === null ? undefined : gagnant);
 
-    if (reglages.voix) {
-      Voix.dire(gagnant === null
-        ? 'La réponse était : ' + q.reponse + '.'
-        : 'Bravo ' + partie.joueurs[gagnant].nom + ' ! C’était ' + q.reponse + '.',
-      { enregistrement: q.id + (gagnant === null ? '-reponse' : '-bravo') });
+    if (!reglages.voix) return;
+    if (gagnant === null) {
+      Voix.dire('La réponse était : ' + q.reponse + '.', { enregistrement: q.id + '-reponse' });
+      return;
     }
+    // La félicitation, puis la réponse — sauf si l'on est déjà passé à la suite.
+    Voix.dire(FELICITATIONS[felicitation], { enregistrement: 'felicitations-' + (felicitation + 1) })
+      .then(complet => {
+        if (!complet || !partie || partie.phase !== 'resultat') return;
+        Voix.dire('C’était ' + q.reponse + '.', { enregistrement: q.id + '-bravo' });
+      });
+  }
+
+  /** Une félicitation au hasard, jamais deux fois de suite la même. */
+  let derniereFelicitation = -1;
+  function tirerFelicitation() {
+    let rang;
+    do {
+      rang = Math.floor(Math.random() * FELICITATIONS.length);
+    } while (rang === derniereFelicitation && FELICITATIONS.length > 1);
+    derniereFelicitation = rang;
+    return rang;
   }
 
   /**

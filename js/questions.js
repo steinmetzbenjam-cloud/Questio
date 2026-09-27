@@ -1584,3 +1584,22 @@ const QUESTIONS_ENFANTS = [
       'Combien de jours est-il resté dans le poisson ?'
     ] }
 ];
+
+/*
+ * Félicitations lues après une bonne réponse, tirées au hasard. Elles sont
+ * enregistrées avec la voix (outils/enregistrer.py) : sans prénom, donc.
+ */
+const FELICITATIONS = [
+  'Bravo, bonne réponse !',
+  'Excellent !',
+  'Bien joué !',
+  'Magnifique, c’est exact !',
+  'Quelle connaissance des Écritures !',
+  'Digne des Béréens !',
+  'Impressionnant !',
+  'Exactement !',
+  'Chapeau !',
+  'Sage comme Salomon !',
+  'Superbe réponse !',
+  'Rien ne t’échappe !'
+];

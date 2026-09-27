@@ -44,8 +44,11 @@ def lire_questions():
 ObjC.import('Foundation');
 const src = $.NSString.stringWithContentsOfFileEncodingError(
   {json.dumps(os.path.join(RACINE, 'js', 'questions.js'))}, $.NSUTF8StringEncoding, null).js;
-const [a, e] = eval(src + '; [QUESTIONS, QUESTIONS_ENFANTS]');
-JSON.stringify(a.concat(e).map(q => ({{ id: q.id, reponse: q.reponse, indices: q.indices }})));
+const [a, e, f] = eval(src + '; [QUESTIONS, QUESTIONS_ENFANTS, FELICITATIONS]');
+JSON.stringify({{
+  questions: a.concat(e).map(q => ({{ id: q.id, reponse: q.reponse, indices: q.indices }})),
+  felicitations: f
+}});
 """
     sortie = subprocess.run(['osascript', '-l', 'JavaScript', '-e', script],
                             capture_output=True, text=True, check=True).stdout
@@ -60,14 +63,16 @@ def dans_la_phrase(reponse):
     return reponse
 
 
-def phrases(questions):
+def phrases(contenu):
     """Tous les enregistrements voulus : nom de fichier → texte."""
     voulu = dict(COMMUNES)
-    for q in questions:
+    for rang, message in enumerate(contenu['felicitations'], 1):
+        voulu[f'felicitations-{rang}'] = message
+    for q in contenu['questions']:
         for rang, indice in enumerate(q['indices'], 1):
             voulu[f"{q['id']}-{rang}"] = indice
         reponse = dans_la_phrase(q['reponse'])
-        voulu[f"{q['id']}-bravo"] = f'Bonne réponse ! C’était {reponse}.'
+        voulu[f"{q['id']}-bravo"] = f'C’était {reponse}.'
         voulu[f"{q['id']}-reponse"] = f'La réponse était : {reponse}.'
     return voulu
 
