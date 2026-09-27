@@ -23,7 +23,7 @@ const Jeu = (() => {
   const TEMPS_REPONSE = 10;
 
   // Secondes de dernière chance après la fin de la lecture.
-  const DERNIERE_CHANCE = { adultes: 10, enfants: 15, histoire: 10 };
+  const DERNIERE_CHANCE = { adultes: 10, enfants: 15 };
 
   const reglages = Object.assign({
     noms: ['', ''],
@@ -41,6 +41,8 @@ const Jeu = (() => {
     reglages.voixVersion = 2;
     memoire.ecrire('reglages', reglages);
   }
+  // Seuls deux questionnaires existent (l'ancien choix « Histoire » a été retiré).
+  if (reglages.public !== 'enfants') reglages.public = 'adultes';
   Voix.utiliser(reglages.voixNom);
   Voix.reglerVitesse(reglages.vitesse);
 
@@ -154,13 +156,12 @@ const Jeu = (() => {
       const posees = new Set(memoire.lire('posees', []));
       const liste = questionnaire();
       const reste = liste.filter(q => !posees.has(q.id)).length;
-      const publics = { adultes: 'pour les adultes', enfants: 'pour les enfants', histoire: 'sur l’histoire des Témoins' };
-      pied.textContent = liste.length + ' questions ' + (publics[reglages.public] || publics.adultes)
+      pied.textContent = liste.length + ' questions ' + (reglages.public === 'enfants' ? 'pour les enfants' : 'pour les adultes')
         + ' · ' + reste + ' pas encore posées · version ' + UI.VERSION;
     };
 
     const choixPublic = el('div.choix');
-    for (const [valeur, libelle] of [['adultes', 'Adultes'], ['enfants', 'Enfants'], ['histoire', 'Histoire']]) {
+    for (const [valeur, libelle] of [['adultes', 'Adultes'], ['enfants', 'Enfants']]) {
       choixPublic.appendChild(el('button.choix__bouton' + (valeur === reglages.public ? '.choix__bouton--actif' : ''), {
         type: 'button', texte: libelle,
         onclick: ev => {
@@ -327,9 +328,7 @@ const Jeu = (() => {
   }
 
   function questionnaire() {
-    if (reglages.public === 'enfants') return QUESTIONS_ENFANTS;
-    if (reglages.public === 'histoire') return QUESTIONS_HISTOIRE;
-    return QUESTIONS;
+    return reglages.public === 'enfants' ? QUESTIONS_ENFANTS : QUESTIONS;
   }
 
   /** Choisit des questions jamais posées ; quand tout y est passé, on recommence. */
@@ -587,7 +586,7 @@ const Jeu = (() => {
     }
     partie.segment = q.indices.length - 1;
     dessinerTexte();
-    derniereChance((DERNIERE_CHANCE[reglages.public] || 10) * 1000);
+    derniereChance(DERNIERE_CHANCE[reglages.public] * 1000);
   }
 
   /* — dernière chance — */
