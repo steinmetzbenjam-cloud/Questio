@@ -47,11 +47,25 @@ const Jeu = (() => {
    *  Accueil
    * ===================================================================== */
 
+  // Icône de la roue crantée (tracé fixe, sans donnée extérieure).
+  const ROUE_CRANTEE = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" '
+    + 'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    + '<circle cx="12" cy="12" r="3.2"/>'
+    + '<path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'
+    + '</svg>';
+
   function accueil() {
     arreterPartie();
     const conteneur = racine();
     conteneur.innerHTML = '';
     conteneur.className = 'app app--accueil';
+
+    const roue = el('button.rond.rond--reglages', {
+      type: 'button', 'aria-label': 'Réglages', title: 'Réglages',
+      onclick: ecranReglages
+    });
+    roue.innerHTML = ROUE_CRANTEE;
+    conteneur.appendChild(roue);
 
     conteneur.appendChild(el('header.marque', null, [
       el('div.marque__logo', { 'aria-hidden': 'true' }, [el('span', { texte: 'Q' })]),
@@ -161,19 +175,50 @@ const Jeu = (() => {
       }));
     }
 
-    const caseVoix = el('input', { type: 'checkbox', role: 'switch' });
-    caseVoix.checked = reglages.voix;
-    caseVoix.addEventListener('change', () => {
-      reglages.voix = caseVoix.checked;
-      enregistrerReglages();
-    });
-
     conteneur.appendChild(el('section.carte', null, [
       el('h2.carte__titre', { texte: 'Questions' }),
       choixPublic,
       el('p.carte__sous-titre', { texte: 'Par partie' }),
-      choixQuestions,
-      el('label.bascule', null, [
+      choixQuestions
+    ]));
+
+    conteneur.appendChild(el('button.lancer', {
+      type: 'button',
+      onclick: lancerPartie
+    }, [el('span', { texte: 'Lancer la partie' })]));
+
+    dessinerPied();
+    conteneur.appendChild(pied);
+  }
+
+  /* =====================================================================
+   *  Réglages (la roue crantée de l'accueil)
+   * ===================================================================== */
+
+  function ecranReglages() {
+    const conteneur = racine();
+    conteneur.innerHTML = '';
+    conteneur.className = 'app app--reglages';
+
+    conteneur.appendChild(el('header.entete', null, [
+      el('button.rond', { type: 'button', 'aria-label': 'Retour', texte: '←', onclick: accueil }),
+      el('h1.entete__titre', { texte: 'Réglages' }),
+      el('span.entete__vide')
+    ]));
+
+    const caseVoix = el('input', { type: 'checkbox', role: 'switch' });
+    caseVoix.checked = reglages.voix;
+    const detailsVoix = reglagesVoix();
+    const montrer = () => { detailsVoix.hidden = !reglages.voix || !Voix.disponible(); };
+    caseVoix.addEventListener('change', () => {
+      reglages.voix = caseVoix.checked;
+      enregistrerReglages();
+      montrer();
+    });
+    montrer();
+
+    conteneur.appendChild(el('section.carte', null, [
+      el('label.bascule.bascule--seule', null, [
         el('span.bascule__texte', null, [
           el('span', { texte: 'Lecture à voix haute' }),
           el('span.bascule__aide', {
@@ -184,16 +229,10 @@ const Jeu = (() => {
         ]),
         caseVoix
       ]),
-      reglagesVoix()
+      detailsVoix
     ]));
 
-    conteneur.appendChild(el('button.lancer', {
-      type: 'button',
-      onclick: lancerPartie
-    }, [el('span', { texte: 'Lancer la partie' })]));
-
-    dessinerPied();
-    conteneur.appendChild(pied);
+    conteneur.appendChild(el('p.pied', { texte: 'Questio · version ' + UI.VERSION }));
   }
 
   /** Choix de la voix et de la vitesse de lecture. */

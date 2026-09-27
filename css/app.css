@@ -54,6 +54,31 @@ button:disabled { cursor: default; }
 
 /* ------------------------------------------------------------- accueil --- */
 
+.app--accueil { position: relative; }
+
+.rond--reglages {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top));
+  right: 16px;
+  font-size: 1.35rem;
+}
+
+/* — écran Réglages — */
+
+.entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 4px 0 20px;
+}
+
+.entete__titre { margin: 0; font-family: var(--titre); font-size: 1.5rem; font-weight: 800; }
+.entete__vide { width: 42px; }
+
+.bascule.bascule--seule { padding-top: 0; border-top: 0; }
+.bascule--seule + .voix { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--bord); }
+
 .marque { text-align: center; margin: 18px 0 26px; }
 
 .marque__logo {
