@@ -131,7 +131,7 @@ const Jeu = (() => {
       const liste = questionnaire();
       const reste = liste.filter(q => !posees.has(q.id)).length;
       pied.textContent = liste.length + ' questions ' + (reglages.public === 'enfants' ? 'pour les enfants' : 'pour les adultes')
-        + ' · ' + reste + ' pas encore posées';
+        + ' · ' + reste + ' pas encore posées · version ' + UI.VERSION;
     };
 
     const choixPublic = el('div.choix');
@@ -566,6 +566,15 @@ const Jeu = (() => {
 
     const finEcoute = () => micro.classList.remove('micro--ecoute');
     micro.addEventListener('click', () => {
+      // Sans reconnaissance vocale (certaines applis installées sur iPhone),
+      // le micro du clavier fait le même travail.
+      if (!Dictee.disponible()) {
+        etat.hidden = false;
+        etat.className = 'reponse__etat';
+        etat.textContent = 'Touchez le micro 🎙 du clavier pour dicter.';
+        champ.focus();
+        return;
+      }
       if (micro.classList.contains('micro--ecoute')) {
         Dictee.arreter();
         finEcoute();
@@ -607,7 +616,7 @@ const Jeu = (() => {
     ouvrirPanneau([
       el('p.panneau__surtitre', { texte: 'À toi de répondre' }),
       el('h2.panneau__titre', { texte: joueur.nom }),
-      el('div.reponse', null, [champ, Dictee.disponible() ? micro : null]),
+      el('div.reponse', null, [champ, micro]),
       etat,
       el('button.bouton-plein', { type: 'button', texte: 'Valider', onclick: valider }),
       el('button.lien-bouton', {
@@ -619,8 +628,7 @@ const Jeu = (() => {
         onclick: reprendre
       })
     ]);
-    // Avec la dictée, on laisse le choix : le clavier ne s'ouvre pas d'office.
-    if (!Dictee.disponible()) setTimeout(() => champ.focus(), 60);
+    // On laisse le choix entre taper et dicter : le clavier ne s'ouvre pas d'office.
   }
 
   function verifier(rang, saisie) {

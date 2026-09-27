@@ -43,5 +43,9 @@ const UI = (() => {
     }
   };
 
-  return { el, memoire };
+  // À augmenter à chaque publication, avec le cache de sw.js : on voit ainsi
+  // sur le téléphone si la mise à jour est arrivée.
+  const VERSION = 7;
+
+  return { el, memoire, VERSION };
 })();
