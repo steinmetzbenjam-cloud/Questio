@@ -20,8 +20,11 @@ ligne.
    Tout est retenu pour la prochaine fois.
 2. **Lancer la partie.** Chaque question se lit **indice par indice**, du plus
    difficile au plus facile. Le texte s'affiche au fil de la lecture.
-3. **BUZZ !** La lecture s'arrête net. On touche le nom de celui qui a buzzé
-   (s'il ne reste qu'un joueur en lice, c'est automatique).
+3. **BUZZ !** Le téléphone est posé au milieu de la table et **chaque joueur a
+   son propre buzzer**, de sa couleur, sur le bord qui lui fait face et écrit
+   dans son sens : joueur 1 en bas, 2 en haut (retourné), 3 à gauche, 4 à
+   droite, puis on recommence de 5 à 8. Le premier qui appuie arrête la
+   lecture.
 4. **Il tape sa réponse** et valide.
    - **Juste** : un point, la réponse et sa référence biblique s'affichent.
    - **Faux** : il ne peut plus buzzer sur cette question, et la lecture reprend
@@ -31,8 +34,8 @@ ligne.
 6. À la fin, le **classement** (ex æquo compris), puis *Rejouer* avec de
    nouvelles questions.
 
-« Fausse alerte, reprendre » annule un buzz par erreur. La barre d'espace sert
-de buzzer sur ordinateur. L'écran reste allumé pendant la partie.
+« Buzz par erreur, reprendre » annule un buzz sans pénalité. Sur ordinateur,
+les touches 1 à 8 servent de buzzers. L'écran reste allumé pendant la partie.
 
 ### Les réponses
 

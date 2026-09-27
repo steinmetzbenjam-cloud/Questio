@@ -247,6 +247,8 @@ button:disabled { cursor: default; }
   font-weight: 600;
 }
 
+.lien-bouton--discret { display: block; margin: 0 auto; padding-top: 0; color: var(--doux); font-weight: 500; font-size: .9rem; }
+
 .lien-bouton--centre { display: block; margin: 12px auto 0; }
 
 .lancer {
@@ -273,17 +275,129 @@ button:disabled { cursor: default; }
 /* -------------------------------------------------------------- partie --- */
 
 .app--partie {
-  display: flex;
-  flex-direction: column;
+  max-width: none;
   height: 100vh;
   height: 100dvh;
-  padding-bottom: calc(18px + env(safe-area-inset-bottom));
+  padding: 0;
   overflow: hidden;
 }
 
-.barre { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+/*
+ * Le plateau : le téléphone est au milieu de la table, un buzzer par joueur
+ * sur le bord qui lui fait face, écrit dans son sens.
+ */
+.table {
+  display: grid;
+  height: 100%;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "haut   haut   haut"
+    "gauche centre droite"
+    "bas    bas    bas";
+  gap: 10px;
+  padding:
+    max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right))
+    max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  --epaisseur: 96px;
+}
+
+.table--foule { --epaisseur: 78px; }
+
+.cote { display: flex; justify-content: center; gap: 10px; min-width: 0; min-height: 0; }
+.cote:empty { display: none; }
+
+.cote--bas    { grid-area: bas; }
+.cote--haut   { grid-area: haut; transform: rotate(180deg); }
+/* Sur les côtés, le texte se lit depuis le bord : écriture verticale. */
+.cote--gauche { grid-area: gauche; writing-mode: vertical-rl; }
+.cote--droite { grid-area: droite; writing-mode: vertical-rl; transform: rotate(180deg); }
+
+.centre {
+  grid-area: centre;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.poste {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1 1 0;
+  min-inline-size: 0;
+  max-inline-size: 340px;
+  block-size: var(--epaisseur);
+  padding: 8px;
+  border: 0;
+  border-radius: 26px;
+  background: radial-gradient(circle at 50% 30%,
+    color-mix(in srgb, var(--couleur) 65%, white) 0%,
+    var(--couleur) 55%,
+    color-mix(in srgb, var(--couleur) 72%, black) 100%);
+  box-shadow:
+    0 7px 0 color-mix(in srgb, var(--couleur) 55%, black),
+    0 12px 24px rgba(0, 0, 0, .4);
+  color: #fff;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform .06s, box-shadow .06s, opacity .2s, filter .2s;
+}
+
+/* À un ou deux, de vrais gros buzzers ronds. */
+.table--1 .poste, .table--2 .poste {
+  flex: none;
+  inline-size: min(58vw, 30vh, 270px);
+  block-size: min(58vw, 30vh, 270px);
+  border-radius: 50%;
+}
+
+.poste__nom {
+  max-inline-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--titre);
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: .01em;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .25);
+}
+
+.table--1 .poste__nom, .table--2 .poste__nom { font-size: 1.6rem; }
+
+/* Sur les côtés, nom et score s'alignent dans la longueur du bouton. */
+.cote--gauche .poste, .cote--droite .poste { flex-direction: row; gap: 10px; }
+
+.poste__points {
+  min-inline-size: 34px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .92);
+  color: color-mix(in srgb, var(--couleur) 70%, black);
+  font-weight: 900;
+  text-align: center;
+}
+
+.poste:active, .poste--presse {
+  transform: scale(.94);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--couleur) 55%, black), 0 6px 14px rgba(0, 0, 0, .4);
+}
+
+.poste--bloque { filter: grayscale(1) brightness(.5); }
+.poste--bloque .poste__nom { text-decoration: line-through; }
+.poste:disabled:not(.poste--bloque) { opacity: .55; }
+
+.barre { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
 .barre__numero {
+  font-size: .85rem;
+  white-space: nowrap;
+  text-align: center;
   font-family: var(--titre);
   font-weight: 700;
   color: var(--doux);
@@ -303,45 +417,9 @@ button:disabled { cursor: default; }
 
 .rond--eteint { opacity: .6; }
 
-.scores {
-  display: flex;
-  gap: 8px;
-  margin: 14px -16px 0;
-  padding: 2px 16px 4px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.scores::-webkit-scrollbar { display: none; }
-
-.score {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  flex: none;
-  padding: 6px 6px 6px 12px;
-  border: 1px solid var(--bord);
-  border-radius: 999px;
-  background: var(--carte);
-  font-weight: 600;
-  font-size: .92rem;
-}
-
-.score__points {
-  min-width: 28px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: var(--or);
-  color: #1d2a4a;
-  font-weight: 800;
-  text-align: center;
-}
-
-.score--bloque { opacity: .4; }
-.score--bloque .score__nom { text-decoration: line-through; }
-
 .scene {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -389,50 +467,6 @@ button:disabled { cursor: default; }
 }
 
 .jauge__barre { height: 100%; width: 100%; background: var(--or); transition: width .1s linear; }
-
-.pupitre { display: flex; justify-content: center; padding: 22px 0 18px; }
-
-.buzzer {
-  position: relative;
-  width: min(62vw, 38vh, 280px);
-  aspect-ratio: 1;
-  border: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 35%, #ff8a5f 0%, var(--rouge) 45%, #c53d18 100%);
-  box-shadow:
-    0 12px 0 var(--rouge-fonce),
-    0 22px 40px rgba(0, 0, 0, .45),
-    inset 0 -8px 18px rgba(0, 0, 0, .18);
-  touch-action: manipulation;
-  user-select: none;
-  -webkit-user-select: none;
-  transition: transform .06s, box-shadow .06s, filter .2s;
-}
-
-.buzzer::before {
-  content: '';
-  position: absolute;
-  inset: -12px;
-  border: 6px solid var(--or);
-  border-radius: 50%;
-  opacity: .9;
-}
-
-.buzzer__texte {
-  font-family: var(--titre);
-  font-size: clamp(1.8rem, 9vw, 2.8rem);
-  font-weight: 900;
-  letter-spacing: .06em;
-  color: #fff;
-  text-shadow: 0 2px 0 rgba(0, 0, 0, .2);
-}
-
-.buzzer:active, .buzzer--presse {
-  transform: translateY(9px);
-  box-shadow: 0 3px 0 var(--rouge-fonce), 0 8px 18px rgba(0, 0, 0, .4), inset 0 -4px 10px rgba(0, 0, 0, .2);
-}
-
-.buzzer:disabled { filter: grayscale(.85) brightness(.6); }
 
 /* — panneau superposé (qui, réponse, résultat) — */
 
@@ -484,21 +518,6 @@ button:disabled { cursor: default; }
 }
 
 .panneau__texte { margin: -6px 0 14px; color: var(--doux); }
-
-.qui { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
-
-.qui__joueur {
-  padding: 16px 10px;
-  border: 2px solid var(--or);
-  border-radius: 16px;
-  background: var(--carte-claire);
-  font-family: var(--titre);
-  font-size: 1.15rem;
-  font-weight: 800;
-  overflow-wrap: anywhere;
-}
-
-.qui__joueur:active { background: var(--or); color: #1d2a4a; }
 
 .champ--reponse { margin-bottom: 12px; font-size: 1.2rem; text-align: center; }
 

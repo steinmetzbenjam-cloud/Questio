@@ -295,6 +295,14 @@ const Jeu = (() => {
 
   const vue = {};
 
+  /*
+   * Le téléphone est posé au milieu de la table : chaque joueur a son propre
+   * buzzer, sur le bord qui lui fait face, écrit dans son sens.
+   *   joueur 1 en bas, 2 en haut, 3 à gauche, 4 à droite, puis on recommence.
+   */
+  const COTES = ['bas', 'haut', 'gauche', 'droite'];
+  const COULEURS = ['#e4572e', '#3b82f6', '#22a06b', '#a855f7', '#f59e0b', '#ec4899', '#06b6d4', '#84cc16'];
+
   function ecranPartie() {
     const conteneur = racine();
     conteneur.innerHTML = '';
@@ -307,29 +315,45 @@ const Jeu = (() => {
     });
     dessinerBoutonSon();
 
-    conteneur.appendChild(el('header.barre', null, [
-      el('button.rond', { type: 'button', 'aria-label': 'Quitter', texte: '✕', onclick: demanderQuitter }),
-      vue.numero,
-      vue.son
-    ]));
-
-    vue.scores = el('div.scores');
-    conteneur.appendChild(vue.scores);
-
     vue.theme = el('span.scene__theme');
     vue.texte = el('div.scene__texte', { 'aria-live': 'polite' });
     vue.jauge = el('div.jauge', { hidden: true }, [el('div.jauge__barre')]);
-    conteneur.appendChild(el('main.scene', null, [vue.theme, vue.texte, vue.jauge]));
 
-    vue.buzzer = el('button.buzzer', {
-      type: 'button', 'aria-label': 'Buzzer'
-    }, [el('span.buzzer__texte', { texte: 'BUZZ' })]);
-    // pointerdown : réagit dès le contact, sans attendre qu'on relève le doigt.
-    vue.buzzer.addEventListener('pointerdown', ev => { ev.preventDefault(); buzz(); });
-    vue.buzzer.addEventListener('keydown', ev => {
-      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); buzz(); }
+    const centre = el('div.centre', null, [
+      el('header.barre', null, [
+        el('button.rond', { type: 'button', 'aria-label': 'Quitter', texte: '✕', onclick: demanderQuitter }),
+        vue.numero,
+        vue.son
+      ]),
+      el('main.scene', null, [vue.theme, vue.texte, vue.jauge])
+    ]);
+
+    const cotes = {};
+    for (const cote of COTES) cotes[cote] = el('div.cote.cote--' + cote);
+
+    vue.postes = partie.joueurs.map((joueur, rang) => {
+      const bouton = el('button.poste', {
+        type: 'button',
+        'aria-label': 'Buzzer de ' + joueur.nom,
+        style: '--couleur: ' + COULEURS[rang % COULEURS.length]
+      }, [
+        el('span.poste__nom', { texte: joueur.nom }),
+        el('span.poste__points', { texte: '0' })
+      ]);
+      // pointerdown : réagit dès le contact, sans attendre qu'on relève le doigt.
+      bouton.addEventListener('pointerdown', ev => { ev.preventDefault(); buzz(rang); });
+      bouton.addEventListener('keydown', ev => {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); buzz(rang); }
+      });
+      cotes[COTES[rang % COTES.length]].appendChild(bouton);
+      return bouton;
     });
-    conteneur.appendChild(el('footer.pupitre', null, [vue.buzzer]));
+
+    const nombre = partie.joueurs.length;
+    const table = el('div.table.table--' + Math.min(nombre, 4) + (nombre > 4 ? '.table--foule' : ''), null, [
+      cotes.haut, cotes.gauche, centre, cotes.droite, cotes.bas
+    ]);
+    conteneur.appendChild(table);
 
     vue.panneau = el('div.panneau', { hidden: true });
     conteneur.appendChild(vue.panneau);
@@ -354,12 +378,11 @@ const Jeu = (() => {
   }
 
   function dessinerScores() {
-    vue.scores.innerHTML = '';
     partie.joueurs.forEach((j, rang) => {
-      vue.scores.appendChild(el('div.score' + (partie.bloques.has(rang) ? '.score--bloque' : ''), null, [
-        el('span.score__nom', { texte: j.nom }),
-        el('span.score__points', { texte: String(j.points) })
-      ]));
+      const poste = vue.postes[rang];
+      poste.querySelector('.poste__points').textContent = String(j.points);
+      poste.classList.toggle('poste--bloque', partie.bloques.has(rang));
+      poste.disabled = partie.phase === 'resultat' || partie.bloques.has(rang);
     });
   }
 
@@ -390,7 +413,6 @@ const Jeu = (() => {
     vue.numero.textContent = 'Question ' + (partie.rang + 1) + ' / ' + partie.questions.length;
     vue.theme.textContent = q.theme;
     vue.jauge.hidden = true;
-    vue.buzzer.disabled = false;
     dessinerScores();
     dessinerTexte();
     lire();
@@ -466,30 +488,19 @@ const Jeu = (() => {
     return partie.joueurs.map((j, rang) => rang).filter(rang => !partie.bloques.has(rang));
   }
 
-  function buzz() {
+  function buzz(rang) {
     if (!partie || (partie.phase !== 'lecture' && partie.phase !== 'attente')) return;
-    const reprise = partie.phase; // pour savoir quoi reprendre après une erreur
+    if (partie.bloques.has(rang)) return;
+    const reprise = partie.phase; // pour savoir quoi reprendre ensuite
     interrompre();
     partie.phase = 'qui';
     partie.reprise = reprise;
     Sons.buzz();
     if (navigator.vibrate) navigator.vibrate(90);
-    vue.buzzer.classList.add('buzzer--presse');
-    setTimeout(() => vue.buzzer.classList.remove('buzzer--presse'), 250);
-
-    const candidats = eligibles();
-    if (candidats.length === 1) {
-      demanderReponse(candidats[0]);
-      return;
-    }
-    ouvrirPanneau([
-      el('h2.panneau__titre', { texte: 'Qui a buzzé ?' }),
-      el('div.qui', null, candidats.map(rang => el('button.qui__joueur', {
-        type: 'button', texte: partie.joueurs[rang].nom,
-        onclick: () => demanderReponse(rang)
-      }))),
-      el('button.lien-bouton', { type: 'button', texte: 'Fausse alerte, reprendre', onclick: reprendre })
-    ]);
+    const poste = vue.postes[rang];
+    poste.classList.add('poste--presse');
+    setTimeout(() => poste.classList.remove('poste--presse'), 300);
+    demanderReponse(rang);
   }
 
   function demanderReponse(rang) {
@@ -519,6 +530,10 @@ const Jeu = (() => {
       el('button.lien-bouton', {
         type: 'button', texte: 'Je ne sais plus',
         onclick: () => mauvaiseReponse(rang, null)
+      }),
+      el('button.lien-bouton.lien-bouton--discret', {
+        type: 'button', texte: 'Buzz par erreur, reprendre',
+        onclick: reprendre
       })
     ]);
     setTimeout(() => champ.focus(), 60);
@@ -573,7 +588,6 @@ const Jeu = (() => {
     interrompre();
     partie.phase = 'resultat';
     vue.jauge.hidden = true;
-    vue.buzzer.disabled = true;
     dessinerScores();
     dessinerTexte();
     const q = partie.questions[partie.rang];
@@ -739,12 +753,14 @@ const Jeu = (() => {
     if (document.visibilityState === 'visible' && partie) garderEcranAllume();
   });
 
-  // Barre d'espace = buzzer, sur ordinateur.
+  // Sur ordinateur, les touches 1 à 8 servent de buzzers.
   document.addEventListener('keydown', ev => {
-    if (ev.code !== 'Space' || !partie) return;
-    if (/^(INPUT|TEXTAREA|BUTTON)$/.test(document.activeElement && document.activeElement.tagName)) return;
+    if (!partie || !/^[1-8]$/.test(ev.key)) return;
+    if (/^(INPUT|TEXTAREA)$/.test(document.activeElement && document.activeElement.tagName)) return;
+    const rang = parseInt(ev.key, 10) - 1;
+    if (rang >= partie.joueurs.length) return;
     ev.preventDefault();
-    buzz();
+    buzz(rang);
   });
 
   return { accueil };
