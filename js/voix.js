@@ -12,24 +12,56 @@ const Voix = (() => {
 
   const synthese = 'speechSynthesis' in window ? window.speechSynthesis : null;
   let voixChoisie = null;
-  let enCours = null; // résolution de la phrase en cours de lecture
+  let preference = null;   // identifiant de la voix choisie par l'utilisateur
+  let enCours = null;      // résolution de la phrase en cours de lecture
   let minuterie = null;
+  const abonnes = [];
+  let vitesse = 1;
 
-  function choisirVoix() {
-    if (!synthese) return;
-    const francaises = synthese.getVoices().filter(v => /^fr/i.test(v.lang));
-    if (!francaises.length) return;
-    // Les voix « améliorées » sont bien plus agréables à écouter.
-    const note = v => (/fr[-_]FR/i.test(v.lang) ? 4 : 0)
-      + (/premium|enhanced|améliorée|natural|neural/i.test(v.name) ? 3 : 0)
-      + (/google|thomas|amélie|audrey|aurélie/i.test(v.name) ? 1 : 0)
-      + (v.localService ? 1 : 0);
-    voixChoisie = francaises.sort((a, b) => note(b) - note(a))[0];
+  // Les voix « améliorées » sont bien plus agréables à écouter.
+  const note = v => (/fr[-_]FR/i.test(v.lang) ? 4 : 0)
+    + (/premium|enhanced|améliorée|natural|neural/i.test(v.name) ? 3 : 0)
+    + (/google|thomas|amélie|audrey|aurélie/i.test(v.name) ? 1 : 0)
+    + (v.localService ? 1 : 0);
+
+  /** Les voix françaises du téléphone, la meilleure d'abord. */
+  function liste() {
+    if (!synthese) return [];
+    return synthese.getVoices()
+      .filter(v => /^fr/i.test(v.lang))
+      .sort((a, b) => note(b) - note(a) || a.name.localeCompare(b.name));
   }
 
+  function choisirVoix() {
+    const francaises = liste();
+    voixChoisie = francaises.find(v => v.voiceURI === preference) || francaises[0] || null;
+  }
+
+  // La liste des voix arrive parfois après le chargement de la page.
   if (synthese) {
     choisirVoix();
-    synthese.addEventListener('voiceschanged', choisirVoix);
+    synthese.addEventListener('voiceschanged', () => {
+      choisirVoix();
+      abonnes.forEach(f => f());
+    });
+  }
+
+  /** Retient la voix voulue (null : la meilleure disponible). */
+  function utiliser(identifiant) {
+    preference = identifiant || null;
+    choisirVoix();
+  }
+
+  function actuelle() {
+    return voixChoisie ? voixChoisie.voiceURI : null;
+  }
+
+  function reglerVitesse(valeur) {
+    vitesse = valeur || 1;
+  }
+
+  function surChangement(fonction) {
+    abonnes.push(fonction);
   }
 
   function disponible() {
@@ -72,18 +104,18 @@ const Voix = (() => {
       enCours = conclure;
 
       if (!synthese || reglages.muet) {
-        minuterie = setTimeout(() => conclure(true), duree(texte, reglages.vitesse));
+        minuterie = setTimeout(() => conclure(true), duree(texte, vitesse));
         return;
       }
 
       const phrase = new SpeechSynthesisUtterance(texte);
       phrase.lang = 'fr-FR';
       if (voixChoisie) phrase.voice = voixChoisie;
-      phrase.rate = reglages.vitesse || 1;
+      phrase.rate = vitesse;
       phrase.onend = () => conclure(true);
       phrase.onerror = () => conclure(false);
       // Garde-fou : certains navigateurs oublient d'annoncer la fin.
-      minuterie = setTimeout(() => conclure(true), duree(texte, reglages.vitesse) * 2.5 + 3000);
+      minuterie = setTimeout(() => conclure(true), duree(texte, vitesse) * 2.5 + 3000);
       // Chrome ignore parfois une phrase lancée juste après une coupure.
       setTimeout(() => { if (!fini) synthese.speak(phrase); }, 40);
     });
@@ -96,7 +128,7 @@ const Voix = (() => {
     if (enCours) enCours(false);
   }
 
-  return { disponible, debloquer, dire, taire };
+  return { disponible, debloquer, dire, taire, liste, utiliser, actuelle, reglerVitesse, surChangement };
 })();
 
 /* ------------------------------------------------------------------ sons --- */

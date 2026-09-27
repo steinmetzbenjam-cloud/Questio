@@ -15,8 +15,9 @@ ligne.
 ## Comment on joue
 
 1. **Accueil** — le nombre de joueurs (1 à 8) et leurs noms, le nombre de
-   questions (5, 10, 15 ou 20), la lecture à voix haute. Tout est retenu pour la
-   prochaine fois.
+   questions (5, 10, 15 ou 20), la lecture à voix haute, la voix (parmi les
+   voix françaises du téléphone, ★ pour les voix améliorées) et sa vitesse.
+   Tout est retenu pour la prochaine fois.
 2. **Lancer la partie.** Chaque question se lit **indice par indice**, du plus
    difficile au plus facile. Le texte s'affiche au fil de la lecture.
 3. **BUZZ !** La lecture s'arrête net. On touche le nom de celui qui a buzzé

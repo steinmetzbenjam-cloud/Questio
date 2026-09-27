@@ -24,8 +24,13 @@ const Jeu = (() => {
   const reglages = Object.assign({
     noms: ['', ''],
     nbQuestions: 10,
-    voix: true
+    voix: true,
+    voixNom: null,   // null : la meilleure voix française du téléphone
+    vitesse: 1
   }, memoire.lire('reglages', {}));
+
+  Voix.utiliser(reglages.voixNom);
+  Voix.reglerVitesse(reglages.vitesse);
 
   let partie = null;
   let verrouEcran = null;
@@ -152,13 +157,7 @@ const Jeu = (() => {
         ]),
         caseVoix
       ]),
-      el('button.lien-bouton', {
-        type: 'button', texte: 'Tester la voix',
-        onclick: () => {
-          Voix.debloquer();
-          Voix.dire('Bienvenue dans Questio ! Qui suis-je ?', { muet: false });
-        }
-      })
+      reglagesVoix()
     ]));
 
     conteneur.appendChild(el('button.lancer', {
@@ -170,6 +169,65 @@ const Jeu = (() => {
     conteneur.appendChild(el('p.pied', {
       texte: QUESTIONS.length + ' questions au total · ' + Math.max(reste, 0) + ' pas encore posées'
     }));
+  }
+
+  /** Choix de la voix et de la vitesse de lecture. */
+  function reglagesVoix() {
+    const essayer = () => {
+      Voix.debloquer();
+      Voix.dire('Bienvenue dans Questio ! Je suis né à Tarse. Qui suis-je ?');
+    };
+
+    const bloc = el('div.voix');
+    const menu = el('select.champ.voix__menu', { 'aria-label': 'Voix' });
+    menu.addEventListener('change', () => {
+      reglages.voixNom = menu.value || null;
+      enregistrerReglages();
+      Voix.utiliser(reglages.voixNom);
+      essayer();
+    });
+
+    const REGIONS = { FR: 'France', CA: 'Canada', BE: 'Belgique', CH: 'Suisse', LU: 'Luxembourg' };
+    function remplirMenu() {
+      const voix = Voix.liste();
+      menu.innerHTML = '';
+      for (const v of voix) {
+        const region = REGIONS[(v.lang.split(/[-_]/)[1] || '').toUpperCase()];
+        menu.appendChild(el('option', {
+          value: v.voiceURI,
+          texte: v.name.replace(/\s*\(.*\)\s*$/, '') + (region ? ' — ' + region : '')
+            + (/premium|enhanced|améliorée|natural|neural/i.test(v.name) ? ' ★' : '')
+        }));
+      }
+      menu.value = Voix.actuelle() || '';
+      ligneMenu.hidden = voix.length < 2;
+    }
+
+    const ligneMenu = el('label.voix__ligne', null, [el('span.voix__etiquette', { texte: 'Voix' }), menu]);
+    // La liste des voix arrive parfois un peu après l'ouverture de la page.
+    Voix.surChangement(() => { if (menu.isConnected) remplirMenu(); });
+    remplirMenu();
+
+    const vitesses = el('div.choix.choix--petit');
+    for (const [libelle, valeur] of [['Lente', 0.85], ['Normale', 1], ['Rapide', 1.15]]) {
+      vitesses.appendChild(el('button.choix__bouton' + (valeur === reglages.vitesse ? '.choix__bouton--actif' : ''), {
+        type: 'button', texte: libelle,
+        onclick: ev => {
+          reglages.vitesse = valeur;
+          enregistrerReglages();
+          Voix.reglerVitesse(valeur);
+          vitesses.querySelectorAll('.choix__bouton').forEach(b => b.classList.remove('choix__bouton--actif'));
+          ev.currentTarget.classList.add('choix__bouton--actif');
+          essayer();
+        }
+      }));
+    }
+
+    bloc.appendChild(ligneMenu);
+    bloc.appendChild(el('div.voix__ligne', null, [el('span.voix__etiquette', { texte: 'Vitesse' }), vitesses]));
+    bloc.appendChild(el('button.lien-bouton', { type: 'button', texte: 'Tester la voix', onclick: essayer }));
+    if (!Voix.disponible()) bloc.hidden = true;
+    return bloc;
   }
 
   /* =====================================================================
