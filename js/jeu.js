@@ -443,6 +443,7 @@ const Jeu = (() => {
         'aria-label': 'Buzzer de ' + joueur.nom,
         style: '--couleur: ' + COULEURS[rang % COULEURS.length]
       }, [
+        el('span.poste__couronne', { texte: '👑', 'aria-hidden': 'true' }),
         el('span.poste__nom', { texte: joueur.nom }),
         el('span.poste__points', { texte: '0' })
       ]);
@@ -484,8 +485,11 @@ const Jeu = (() => {
   }
 
   function dessinerScores() {
+    // La couronne va au joueur en tête (à tous, en cas d'égalité), dès le premier point.
+    const meilleur = Math.max(...partie.joueurs.map(j => j.points));
     partie.joueurs.forEach((j, rang) => {
       const poste = vue.postes[rang];
+      poste.classList.toggle('poste--meneur', meilleur > 0 && j.points === meilleur && partie.joueurs.length > 1);
       poste.querySelector('.poste__points').textContent = String(j.points);
       poste.classList.toggle('poste--bloque', partie.bloques.has(rang));
       poste.disabled = partie.phase === 'resultat' || partie.bloques.has(rang);

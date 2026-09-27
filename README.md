@@ -28,7 +28,8 @@ ligne.
    son propre buzzer**, de sa couleur, sur le bord qui lui fait face et écrit
    dans son sens : joueur 1 en bas, 2 en haut (retourné), 3 à gauche, 4 à
    droite, puis on recommence de 5 à 8. Le premier qui appuie arrête la
-   lecture.
+   lecture. Une couronne 👑 coiffe le buzzer du joueur en tête (de chacun,
+   en cas d'égalité).
 4. **Il tape sa réponse**, ou la **dicte** avec le bouton 🎤, et valide. En
    dictée, si l'une des transcriptions proposées par le téléphone est la bonne
    réponse, elle est validée d'elle-même ; sinon le texte reste dans le champ

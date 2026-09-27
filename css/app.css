@@ -401,6 +401,31 @@ button:disabled { cursor: default; }
 /* Sur les côtés, nom et score s'alignent dans la longueur du bouton. */
 .cote--gauche .poste, .cote--droite .poste { flex-direction: row; gap: 10px; }
 
+/* La couronne du joueur en tête, sur le coin du bouton, dans son sens
+   (propriétés logiques : elles suivent l'écriture tournée des côtés). */
+.poste { position: relative; }
+
+.poste__couronne {
+  position: absolute;
+  inset-block-start: -16px;
+  inset-inline-end: -6px;
+  font-size: 1.7rem;
+  line-height: 1;
+  text-orientation: sideways;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .45));
+  transform: rotate(18deg) scale(0);
+  transition: transform .35s cubic-bezier(.3, 1.6, .5, 1);
+  pointer-events: none;
+}
+
+.poste--meneur .poste__couronne { transform: rotate(18deg) scale(1); }
+
+.table--1 .poste__couronne, .table--2 .poste__couronne {
+  inset-block-start: 2%;
+  inset-inline-end: 6%;
+  font-size: 2.2rem;
+}
+
 .poste__points {
   min-inline-size: 34px;
   padding: 2px 10px;
