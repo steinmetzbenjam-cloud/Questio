@@ -25,7 +25,10 @@ ligne.
    dans son sens : joueur 1 en bas, 2 en haut (retourné), 3 à gauche, 4 à
    droite, puis on recommence de 5 à 8. Le premier qui appuie arrête la
    lecture.
-4. **Il tape sa réponse** et valide.
+4. **Il tape sa réponse**, ou la **dicte** avec le bouton 🎤, et valide. En
+   dictée, si l'une des transcriptions proposées par le téléphone est la bonne
+   réponse, elle est validée d'elle-même ; sinon le texte reste dans le champ
+   pour être corrigé.
    - **Juste** : un point, la réponse et sa référence biblique s'affichent.
    - **Faux** : il ne peut plus buzzer sur cette question, et la lecture reprend
      au début de l'indice interrompu.

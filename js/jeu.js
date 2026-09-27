@@ -558,10 +558,57 @@ const Jeu = (() => {
     };
     champ.addEventListener('keydown', ev => { if (ev.key === 'Enter') valider(); });
 
+    /* — dictée : on dit sa réponse au lieu de la taper — */
+    const etat = el('p.reponse__etat', { hidden: true });
+    const micro = el('button.micro', {
+      type: 'button', 'aria-label': 'Dicter la réponse', title: 'Dicter la réponse'
+    }, [el('span', { texte: '🎤' })]);
+
+    const finEcoute = () => micro.classList.remove('micro--ecoute');
+    micro.addEventListener('click', () => {
+      if (micro.classList.contains('micro--ecoute')) {
+        Dictee.arreter();
+        finEcoute();
+        etat.hidden = true;
+        return;
+      }
+      champ.blur(); // le clavier laisse la place
+      micro.classList.add('micro--ecoute');
+      etat.hidden = false;
+      etat.className = 'reponse__etat';
+      etat.textContent = 'J’écoute…';
+      Dictee.ecouter({
+        provisoire: texte => { champ.value = texte; },
+        fin: propositions => {
+          finEcoute();
+          if (!propositions.length) {
+            etat.textContent = champ.value ? 'Vérifiez, puis validez.' : 'Je n’ai rien compris. Réessayez.';
+            return;
+          }
+          // Si l'une des transcriptions est la bonne réponse, c'est gagné.
+          const q = partie.questions[partie.rang];
+          const juste = propositions.find(p => Reponse.juste(p, q, partie.enfants));
+          if (juste) {
+            champ.value = juste;
+            verifier(rang, juste);
+            return;
+          }
+          champ.value = propositions[0];
+          etat.textContent = 'Vérifiez, corrigez si besoin, puis validez.';
+        },
+        erreur: message => {
+          finEcoute();
+          etat.className = 'reponse__etat reponse__etat--erreur';
+          etat.textContent = message;
+        }
+      });
+    });
+
     ouvrirPanneau([
       el('p.panneau__surtitre', { texte: 'À toi de répondre' }),
       el('h2.panneau__titre', { texte: joueur.nom }),
-      champ,
+      el('div.reponse', null, [champ, Dictee.disponible() ? micro : null]),
+      etat,
       el('button.bouton-plein', { type: 'button', texte: 'Valider', onclick: valider }),
       el('button.lien-bouton', {
         type: 'button', texte: 'Je ne sais plus',
@@ -572,7 +619,8 @@ const Jeu = (() => {
         onclick: reprendre
       })
     ]);
-    setTimeout(() => champ.focus(), 60);
+    // Avec la dictée, on laisse le choix : le clavier ne s'ouvre pas d'office.
+    if (!Dictee.disponible()) setTimeout(() => champ.focus(), 60);
   }
 
   function verifier(rang, saisie) {
@@ -663,12 +711,14 @@ const Jeu = (() => {
   /* — panneau superposé — */
 
   function ouvrirPanneau(contenu) {
+    Dictee.arreter();
     vue.panneau.innerHTML = '';
     vue.panneau.appendChild(el('div.panneau__boite', { role: 'dialog', 'aria-modal': 'true' }, contenu));
     vue.panneau.hidden = false;
   }
 
   function fermerPanneau() {
+    Dictee.arreter();
     if (!vue.panneau) return;
     vue.panneau.hidden = true;
     vue.panneau.innerHTML = '';

@@ -183,3 +183,81 @@ const Sons = (() => {
     fin()    { [523, 659, 784, 1047].forEach((f, i) => note(f, i * 0.16, 0.5, 'sine', 0.2)); }
   };
 })();
+
+/* --------------------------------------------------------------- dictée --- */
+
+/*
+ * Dicter sa réponse au lieu de la taper, grâce à la reconnaissance vocale du
+ * téléphone. Le téléphone propose plusieurs transcriptions possibles : elles
+ * sont toutes rendues, pour que la bonne réponse ait sa chance même si la
+ * première transcription est un peu à côté.
+ */
+const Dictee = (() => {
+  const Reconnaissance = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+  let enCours = null;
+
+  function disponible() {
+    return !!Reconnaissance;
+  }
+
+  /**
+   * Écoute une réponse. Réglages :
+   *   provisoire(texte)      — ce qui est entendu, au fil de l'eau ;
+   *   fin(propositions)      — les transcriptions possibles, la plus probable
+   *                            d'abord (vide si rien n'a été compris) ;
+   *   erreur(message)        — la dictée n'a pas pu fonctionner.
+   */
+  function ecouter(reglages) {
+    arreter();
+    const r = new Reconnaissance();
+    r.lang = 'fr-FR';
+    r.interimResults = true;
+    r.continuous = false;
+    r.maxAlternatives = 5;
+
+    let propositions = [];
+    let fini = false;
+    const conclure = () => {
+      if (fini) return;
+      fini = true;
+      if (enCours === r) enCours = null;
+      reglages.fin(propositions);
+    };
+
+    r.onresult = ev => {
+      const resultat = ev.results[ev.results.length - 1];
+      const textes = Array.from(resultat).map(a => a.transcript.trim()).filter(Boolean);
+      if (resultat.isFinal) propositions = textes;
+      if (textes[0] && reglages.provisoire) reglages.provisoire(textes[0]);
+      if (resultat.isFinal) r.stop();
+    };
+    r.onerror = ev => {
+      if (fini) return;
+      fini = true;
+      if (enCours === r) enCours = null;
+      const refus = ev.error === 'not-allowed' || ev.error === 'service-not-allowed';
+      reglages.erreur(refus
+        ? 'Micro refusé. Autorisez le micro pour ce site, ou utilisez le micro du clavier.'
+        : ev.error === 'no-speech' ? 'Je n’ai rien entendu. Réessayez.'
+          : 'La dictée n’a pas fonctionné. Utilisez le micro du clavier.');
+    };
+    r.onend = conclure;
+
+    enCours = r;
+    try {
+      r.start();
+    } catch (e) {
+      r.onerror({ error: 'start' });
+    }
+  }
+
+  function arreter() {
+    if (!enCours) return;
+    const r = enCours;
+    enCours = null;
+    r.onresult = r.onerror = r.onend = null;
+    try { r.abort(); } catch (e) { /* déjà arrêtée */ }
+  }
+
+  return { disponible, ecouter, arreter };
+})();
