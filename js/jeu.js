@@ -250,6 +250,10 @@ const Jeu = (() => {
 
     bloc.appendChild(ligneMenu);
     bloc.appendChild(el('div.voix__ligne', null, [el('span.voix__etiquette', { texte: 'Vitesse' }), vitesses]));
+    bloc.appendChild(el('p.bascule__aide', {
+      texte: 'Le téléphone ne partage pas toutes ses voix avec les applications web : les voix Siri n’y sont jamais. '
+        + 'Une voix « améliorée » téléchargée dans les réglages peut apparaître après avoir fermé et rouvert Questio.'
+    }));
     bloc.appendChild(el('button.lien-bouton', { type: 'button', texte: 'Tester la voix', onclick: essayer }));
     if (!Voix.disponible()) bloc.hidden = true;
     return bloc;

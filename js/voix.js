@@ -37,12 +37,25 @@ const Voix = (() => {
     voixChoisie = francaises.find(v => v.voiceURI === preference) || francaises[0] || null;
   }
 
-  // La liste des voix arrive parfois après le chargement de la page.
+  // La liste des voix arrive parfois après le chargement de la page, et
+  // Safari sur iPhone la complète sans toujours le signaler : on la relit
+  // plusieurs fois au démarrage, et à chaque retour dans l'application.
+  let nombreConnu = -1;
+  function relire() {
+    if (!synthese) return;
+    const nombre = synthese.getVoices().length;
+    if (nombre === nombreConnu) return;
+    nombreConnu = nombre;
+    choisirVoix();
+    abonnes.forEach(f => f());
+  }
+
   if (synthese) {
     choisirVoix();
-    synthese.addEventListener('voiceschanged', () => {
-      choisirVoix();
-      abonnes.forEach(f => f());
+    synthese.addEventListener('voiceschanged', relire);
+    [300, 1000, 2500, 5000].forEach(ms => setTimeout(relire, ms));
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') relire();
     });
   }
 
