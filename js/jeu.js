@@ -135,7 +135,7 @@ const Jeu = (() => {
     };
 
     const choixPublic = el('div.choix');
-    for (const [valeur, libelle] of [['adultes', 'Adultes'], ['enfants', 'Enfant']]) {
+    for (const [valeur, libelle] of [['adultes', 'Adultes'], ['enfants', 'Enfants']]) {
       choixPublic.appendChild(el('button.choix__bouton' + (valeur === reglages.public ? '.choix__bouton--actif' : ''), {
         type: 'button', texte: libelle,
         onclick: ev => {
@@ -627,7 +627,7 @@ const Jeu = (() => {
         type: 'button', texte: 'Buzz par erreur, reprendre',
         onclick: reprendre
       })
-    ]);
+    ], rang);
     // On laisse le choix entre taper et dicter : le clavier ne s'ouvre pas d'office.
   }
 
@@ -654,7 +654,7 @@ const Jeu = (() => {
       el('p.panneau__texte', {
         texte: partie.joueurs[rang].nom + ' ne peut plus buzzer sur cette question.'
       })
-    ]);
+    ], rang);
     const jeton = partie.jeton;
     setTimeout(() => {
       if (!partie || partie.jeton !== jeton || partie.phase !== 'erreur') return;
@@ -753,10 +753,15 @@ const Jeu = (() => {
 
   /* — panneau superposé — */
 
-  function ouvrirPanneau(contenu) {
+  /**
+   * Ouvre une fenêtre au milieu de l'écran. Avec `rang`, elle est tournée vers
+   * ce joueur, comme son buzzer : il la lit dans son sens, de sa place.
+   */
+  function ouvrirPanneau(contenu, rang) {
     Dictee.arreter();
     vue.panneau.innerHTML = '';
-    vue.panneau.appendChild(el('div.panneau__boite', { role: 'dialog', 'aria-modal': 'true' }, contenu));
+    const cote = rang === undefined ? 'bas' : COTES[rang % COTES.length];
+    vue.panneau.appendChild(el('div.panneau__boite.panneau__boite--' + cote, { role: 'dialog', 'aria-modal': 'true' }, contenu));
     vue.panneau.hidden = false;
   }
 

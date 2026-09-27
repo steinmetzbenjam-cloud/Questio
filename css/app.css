@@ -478,7 +478,7 @@ button:disabled { cursor: default; }
   inset: 0;
   z-index: 10;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
   background: rgba(8, 12, 26, .72);
@@ -499,6 +499,20 @@ button:disabled { cursor: default; }
   box-shadow: 0 20px 50px rgba(0, 0, 0, .5);
   text-align: center;
   animation: monter .2s ease-out;
+}
+
+/* Tournée vers le joueur qui a buzzé (propriété rotate : l'animation
+   d'entrée, qui joue sur transform, ne la contrarie pas). */
+.panneau__boite--haut   { rotate: 180deg; }
+.panneau__boite--gauche { rotate: 90deg; }
+.panneau__boite--droite { rotate: -90deg; }
+
+/* Sur le côté, la largeur de la fenêtre s'étend dans la hauteur de l'écran. */
+.panneau__boite--gauche, .panneau__boite--droite {
+  flex: none;
+  width: min(440px, calc(100vh - 40px));
+  width: min(440px, calc(100dvh - 40px));
+  max-width: none;
 }
 
 @keyframes monter { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
