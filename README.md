@@ -14,8 +14,8 @@ ligne.
 
 ## Comment on joue
 
-1. **Accueil** — le nombre de joueurs (1 à 8) et leurs noms, le nombre de
-   questions (5, 10, 15 ou 20), la lecture à voix haute, la voix (parmi les
+1. **Accueil** — le nombre de joueurs (1 à 8) et leurs noms, les questions
+   **Adultes** ou **Enfants (5-10 ans)**, leur nombre (5, 10, 15 ou 20), la lecture à voix haute, la voix (parmi les
    voix françaises du téléphone, ★ pour les voix améliorées) et sa vitesse.
    Tout est retenu pour la prochaine fois.
 2. **Lancer la partie.** Chaque question se lit **indice par indice**, du plus
@@ -47,10 +47,23 @@ petite faute de frappe est pardonnée sur les mots longs. « moise », « Moïse
 Les questions déjà posées ne reviennent pas avant que tout le questionnaire y
 soit passé.
 
+### Le mode enfants
+
+Un questionnaire à part, pour les 5-10 ans : trois indices courts, des récits
+qu'ils connaissent (Noé, David et Goliath, Jonas, Daniel…), des animaux, des
+objets, des métiers et des nombres. Le jeu y est plus indulgent : une faute
+d'orthographe de plus est pardonnée (« Jonnas », « Goliat »), et la dernière
+chance dure quinze secondes au lieu de dix.
+
 ## Le questionnaire
 
-Tout est dans [`js/questions.js`](js/questions.js) : 70 questions
-(personnages, lieux, objets, livres, nombres), chacune avec sa référence.
+Tout est dans [`js/questions.js`](js/questions.js), chaque question avec sa
+référence :
+
+- `QUESTIONS` — 70 questions pour les adultes (personnages, lieux, objets,
+  livres, nombres), quatre indices ;
+- `QUESTIONS_ENFANTS` — 44 questions pour les 5-10 ans, trois indices simples.
+  Leurs identifiants commencent par `e-`.
 
 Pour en ajouter une, copier ce modèle dans la liste :
 

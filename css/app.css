@@ -113,6 +113,8 @@ button:disabled { cursor: default; }
 
 .carte__tete .carte__titre { margin: 0; }
 
+.carte__sous-titre { margin: 0 0 8px; font-size: .82rem; font-weight: 600; color: var(--doux); }
+
 .pas { display: inline-flex; align-items: center; gap: 10px; }
 
 .pas__bouton {
@@ -171,6 +173,7 @@ button:disabled { cursor: default; }
 
 .choix__bouton {
   flex: 1;
+  padding-inline: 6px;
   padding: 10px 0;
   border: 1px solid var(--bord);
   border-radius: 12px;

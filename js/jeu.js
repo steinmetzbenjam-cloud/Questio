@@ -19,11 +19,13 @@ const Jeu = (() => {
 
   const JOUEURS_MIN = 1;
   const JOUEURS_MAX = 8;
-  const DERNIERE_CHANCE = 10; // secondes après la fin de la lecture
+  // Secondes de dernière chance après la fin de la lecture.
+  const DERNIERE_CHANCE = { adultes: 10, enfants: 15 };
 
   const reglages = Object.assign({
     noms: ['', ''],
     nbQuestions: 10,
+    public: 'adultes', // ou « enfants » : questionnaire des 5-10 ans
     voix: true,
     voixNom: null,   // null : la meilleure voix française du téléphone
     vitesse: 1
@@ -123,6 +125,29 @@ const Jeu = (() => {
     dessinerJoueurs();
 
     /* — partie — */
+    const pied = el('p.pied');
+    const dessinerPied = () => {
+      const posees = new Set(memoire.lire('posees', []));
+      const liste = questionnaire();
+      const reste = liste.filter(q => !posees.has(q.id)).length;
+      pied.textContent = liste.length + ' questions ' + (reglages.public === 'enfants' ? 'pour les enfants' : 'pour les adultes')
+        + ' · ' + reste + ' pas encore posées';
+    };
+
+    const choixPublic = el('div.choix');
+    for (const [valeur, libelle] of [['adultes', 'Adultes'], ['enfants', 'Enfants (5-10 ans)']]) {
+      choixPublic.appendChild(el('button.choix__bouton' + (valeur === reglages.public ? '.choix__bouton--actif' : ''), {
+        type: 'button', texte: libelle,
+        onclick: ev => {
+          reglages.public = valeur;
+          enregistrerReglages();
+          choixPublic.querySelectorAll('.choix__bouton').forEach(b => b.classList.remove('choix__bouton--actif'));
+          ev.currentTarget.classList.add('choix__bouton--actif');
+          dessinerPied();
+        }
+      }));
+    }
+
     const choixQuestions = el('div.choix');
     for (const n of [5, 10, 15, 20]) {
       choixQuestions.appendChild(el('button.choix__bouton' + (n === reglages.nbQuestions ? '.choix__bouton--actif' : ''), {
@@ -144,7 +169,9 @@ const Jeu = (() => {
     });
 
     conteneur.appendChild(el('section.carte', null, [
-      el('h2.carte__titre', { texte: 'Questions par partie' }),
+      el('h2.carte__titre', { texte: 'Questions' }),
+      choixPublic,
+      el('p.carte__sous-titre', { texte: 'Par partie' }),
       choixQuestions,
       el('label.bascule', null, [
         el('span.bascule__texte', null, [
@@ -165,10 +192,8 @@ const Jeu = (() => {
       onclick: lancerPartie
     }, [el('span', { texte: 'Lancer la partie' })]));
 
-    const reste = QUESTIONS.length - memoire.lire('posees', []).length;
-    conteneur.appendChild(el('p.pied', {
-      texte: QUESTIONS.length + ' questions au total · ' + Math.max(reste, 0) + ' pas encore posées'
-    }));
+    dessinerPied();
+    conteneur.appendChild(pied);
   }
 
   /** Choix de la voix et de la vitesse de lecture. */
@@ -243,13 +268,19 @@ const Jeu = (() => {
     return copie;
   }
 
+  function questionnaire() {
+    return reglages.public === 'enfants' ? QUESTIONS_ENFANTS : QUESTIONS;
+  }
+
   /** Choisit des questions jamais posées ; quand tout y est passé, on recommence. */
   function tirerQuestions(nombre) {
+    const liste = questionnaire();
     let posees = new Set(memoire.lire('posees', []));
-    let neuves = QUESTIONS.filter(q => !posees.has(q.id));
+    let neuves = liste.filter(q => !posees.has(q.id));
     if (neuves.length < nombre) {
-      posees = new Set();
-      neuves = QUESTIONS.slice();
+      // Ce questionnaire est épuisé : on l'oublie, sans toucher à l'autre.
+      for (const q of liste) posees.delete(q.id);
+      neuves = liste.slice();
     }
     const tirage = melanger(neuves).slice(0, Math.min(nombre, neuves.length));
     for (const q of tirage) posees.add(q.id);
@@ -276,6 +307,7 @@ const Jeu = (() => {
     garderEcranAllume();
 
     partie = {
+      enfants: reglages.public === 'enfants',
       joueurs: nomsDesJoueurs().map(nom => ({ nom, points: 0 })),
       questions: tirerQuestions(reglages.nbQuestions),
       rang: -1,
@@ -447,7 +479,7 @@ const Jeu = (() => {
     }
     partie.segment = q.indices.length - 1;
     dessinerTexte();
-    derniereChance(DERNIERE_CHANCE * 1000);
+    derniereChance(DERNIERE_CHANCE[reglages.public] * 1000);
   }
 
   /* — dernière chance — */
@@ -462,7 +494,7 @@ const Jeu = (() => {
     const tour = () => {
       const reste = Math.max(0, duree - (Date.now() - debut));
       partie.compte.reste = reste;
-      barre.style.width = (reste / (DERNIERE_CHANCE * 1000) * 100) + '%';
+      barre.style.width = Math.min(100, reste / duree * 100) + '%';
       const secondes = Math.ceil(reste / 1000);
       if (secondes < dernierTic && secondes <= 3) Sons.tic();
       dernierTic = secondes;
@@ -541,7 +573,7 @@ const Jeu = (() => {
 
   function verifier(rang, saisie) {
     const q = partie.questions[partie.rang];
-    if (Reponse.juste(saisie, q)) {
+    if (Reponse.juste(saisie, q, partie.enfants)) {
       partie.joueurs[rang].points++;
       Sons.juste();
       reveler(rang, saisie);

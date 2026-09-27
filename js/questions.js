@@ -654,3 +654,374 @@ const QUESTIONS = [
       'Jonas est resté ce nombre de jours dans le poisson. Quel est ce nombre ?'
     ] }
 ];
+
+/*
+ * Questions pour les enfants de 5 à 10 ans : trois indices courts, des récits
+ * qu'ils connaissent, des réponses d'un ou deux mots.
+ */
+const QUESTIONS_ENFANTS = [
+
+  /* ------------------------------------------------------ personnages --- */
+
+  { id: 'e-noe', theme: 'Personnage', reponse: 'Noé', accepte: [],
+    reference: 'Genèse 6:14 ; 7:8, 9 ; 9:13',
+    indices: [
+      'J’ai construit un très, très grand bateau.',
+      'Les animaux sont entrés dedans deux par deux.',
+      'Après la pluie, j’ai vu un arc-en-ciel. Qui suis-je ?'
+    ] },
+
+  { id: 'e-adam', theme: 'Personnage', reponse: 'Adam', accepte: [],
+    reference: 'Genèse 2:7, 19, 20 ; 3:20',
+    indices: [
+      'J’ai donné un nom à tous les animaux.',
+      'Ma femme s’appelait Ève.',
+      'Je suis le premier homme. Qui suis-je ?'
+    ] },
+
+  { id: 'e-eve', theme: 'Personnage', reponse: 'Ève', accepte: [],
+    reference: 'Genèse 2:22 ; 3:20',
+    indices: [
+      'J’habitais dans un magnifique jardin.',
+      'Mon mari s’appelait Adam.',
+      'Je suis la première femme. Qui suis-je ?'
+    ] },
+
+  { id: 'e-abraham', theme: 'Personnage', reponse: 'Abraham', accepte: [],
+    reference: 'Genèse 12:1 ; 15:5 ; 21:3',
+    indices: [
+      'J’ai quitté ma maison parce que Jéhovah me l’a demandé.',
+      'Dieu m’a promis autant d’enfants que d’étoiles dans le ciel.',
+      'Mon fils s’appelait Isaac. Qui suis-je ?'
+    ] },
+
+  { id: 'e-joseph', theme: 'Personnage', reponse: 'Joseph', accepte: [],
+    reference: 'Genèse 37:3, 28 ; 41:41',
+    indices: [
+      'Mon papa m’a donné un très beau vêtement.',
+      'Mes grands frères étaient jaloux et m’ont vendu.',
+      'Je suis devenu un grand chef en Égypte. Qui suis-je ?'
+    ] },
+
+  { id: 'e-moise', theme: 'Personnage', reponse: 'Moïse', accepte: [],
+    reference: 'Exode 2:3-10 ; 14:21',
+    indices: [
+      'Quand j’étais bébé, on m’a caché dans un panier sur le fleuve.',
+      'Une princesse m’a trouvé et m’a adopté.',
+      'J’ai levé mon bâton, et la mer s’est ouverte. Qui suis-je ?'
+    ] },
+
+  { id: 'e-samuel', theme: 'Personnage', reponse: 'Samuel', accepte: [],
+    reference: '1 Samuel 3:1-10',
+    indices: [
+      'Tout petit, j’habitais près du tabernacle avec le prêtre Éli.',
+      'Une nuit, j’ai entendu quelqu’un m’appeler.',
+      'J’ai répondu : « Parle, ton serviteur écoute. » Qui suis-je ?'
+    ] },
+
+  { id: 'e-david', theme: 'Personnage', reponse: 'David', accepte: [],
+    reference: '1 Samuel 16:11 ; 17:49 ; 2 Samuel 5:3',
+    indices: [
+      'J’étais un jeune berger qui gardait les moutons.',
+      'J’ai battu un géant avec une fronde et une pierre.',
+      'Plus tard, je suis devenu roi d’Israël. Qui suis-je ?'
+    ] },
+
+  { id: 'e-goliath', theme: 'Personnage', reponse: 'Goliath', accepte: [],
+    reference: '1 Samuel 17:4-10, 49',
+    indices: [
+      'J’étais un soldat philistin, avec une grosse armure.',
+      'J’étais un géant, beaucoup plus grand que tout le monde.',
+      'Le jeune David m’a vaincu avec une petite pierre. Qui suis-je ?'
+    ] },
+
+  { id: 'e-samson', theme: 'Personnage', reponse: 'Samson', accepte: [],
+    reference: 'Juges 14:5, 6 ; 16:17',
+    indices: [
+      'J’ai tué un lion à mains nues.',
+      'Jéhovah m’avait donné une force extraordinaire.',
+      'Ma force a disparu quand on m’a coupé les cheveux. Qui suis-je ?'
+    ] },
+
+  { id: 'e-ruth', theme: 'Personnage', reponse: 'Ruth', accepte: [],
+    reference: 'Ruth 1:16 ; 2:2, 3 ; 4:13',
+    indices: [
+      'Je n’ai pas voulu quitter ma belle-mère, Noémi.',
+      'J’ai ramassé des épis dans le champ de Boaz.',
+      'Je suis devenue l’arrière-grand-mère du roi David. Qui suis-je ?'
+    ] },
+
+  { id: 'e-elie', theme: 'Personnage', reponse: 'Élie', accepte: [],
+    reference: '1 Rois 17:6 ; 18:38 ; 2 Rois 2:11',
+    indices: [
+      'Des corbeaux m’apportaient à manger.',
+      'Jéhovah a fait descendre du feu du ciel quand j’ai prié.',
+      'Un char de feu est apparu, et je suis parti dans un tourbillon. Qui suis-je ?'
+    ] },
+
+  { id: 'e-esther', theme: 'Personnage', reponse: 'Esther', accepte: [],
+    reference: 'Esther 2:17 ; 4:16 ; 8:3',
+    indices: [
+      'J’étais une jeune fille très belle.',
+      'Je suis devenue reine.',
+      'J’ai été courageuse et j’ai sauvé mon peuple. Qui suis-je ?'
+    ] },
+
+  { id: 'e-daniel', theme: 'Personnage', reponse: 'Daniel', accepte: [],
+    reference: 'Daniel 6:10, 16, 22',
+    indices: [
+      'Je priais Jéhovah trois fois par jour.',
+      'Des hommes jaloux m’ont fait jeter dans une fosse.',
+      'Un ange a fermé la gueule des lions. Qui suis-je ?'
+    ] },
+
+  { id: 'e-jonas', theme: 'Personnage', reponse: 'Jonas', accepte: [],
+    reference: 'Jonas 1:3, 4, 17',
+    indices: [
+      'J’ai pris un bateau pour m’enfuir.',
+      'Il y a eu une terrible tempête sur la mer.',
+      'Un grand poisson m’a avalé. Qui suis-je ?'
+    ] },
+
+  { id: 'e-marie', theme: 'Personnage', reponse: 'Marie', accepte: [],
+    reference: 'Luc 1:26-31 ; 2:7',
+    indices: [
+      'L’ange Gabriel est venu me parler.',
+      'J’ai couché mon bébé dans une mangeoire.',
+      'Je suis la maman de Jésus. Qui suis-je ?'
+    ] },
+
+  { id: 'e-jesus', theme: 'Personnage', reponse: 'Jésus', accepte: ['jesus christ', 'christ'],
+    reference: 'Luc 2:4-7 ; Matthieu 4:23 ; 16:16',
+    indices: [
+      'Je suis né à Bethléem.',
+      'J’ai guéri beaucoup de malades.',
+      'Je suis le Fils de Dieu. Qui suis-je ?'
+    ] },
+
+  { id: 'e-jean-baptiste', theme: 'Personnage', reponse: 'Jean-Baptiste', accepte: ['jean baptiste', 'jean le baptiseur', 'jean'],
+    reference: 'Matthieu 3:4, 13-16',
+    indices: [
+      'Je mangeais des sauterelles et du miel.',
+      'Mon vêtement était fait en poil de chameau.',
+      'J’ai baptisé Jésus dans le fleuve. Qui suis-je ?'
+    ] },
+
+  { id: 'e-pierre', theme: 'Personnage', reponse: 'Pierre', accepte: ['simon pierre', 'simon'],
+    reference: 'Matthieu 4:18 ; 14:29 ; Jean 1:42',
+    indices: [
+      'J’étais pêcheur, avec mon frère André.',
+      'J’ai marché sur l’eau pour aller vers Jésus.',
+      'Je suis un apôtre, et mon nom veut dire « rocher ». Qui suis-je ?'
+    ] },
+
+  { id: 'e-zachee', theme: 'Personnage', reponse: 'Zachée', accepte: [],
+    reference: 'Luc 19:1-6',
+    indices: [
+      'J’étais tout petit.',
+      'Je suis monté dans un arbre pour voir Jésus passer.',
+      'Jésus m’a dit : « Descends vite, je vais chez toi. » Qui suis-je ?'
+    ] },
+
+  { id: 'e-lazare', theme: 'Personnage', reponse: 'Lazare', accepte: [],
+    reference: 'Jean 11:5, 17, 43, 44',
+    indices: [
+      'J’étais un ami de Jésus.',
+      'Je suis mort, et on m’a mis dans une tombe.',
+      'Jésus m’a ramené à la vie. Qui suis-je ?'
+    ] },
+
+  { id: 'e-paul', theme: 'Personnage', reponse: 'Paul', accepte: ['saul'],
+    reference: 'Actes 9:3-6 ; 27:41-44',
+    indices: [
+      'Sur une route, une grande lumière m’a rendu aveugle.',
+      'J’ai fait naufrage pendant un voyage en bateau.',
+      'J’ai beaucoup voyagé pour parler de Jésus et écrit de nombreuses lettres. Qui suis-je ?'
+    ] },
+
+  /* ---------------------------------------------------------- animaux --- */
+
+  { id: 'e-serpent', theme: 'Animal', reponse: 'Le serpent', accepte: ['serpent'],
+    reference: 'Genèse 3:1-5, 14',
+    indices: [
+      'J’ai parlé à Ève dans le jardin.',
+      'Je lui ai dit un mensonge.',
+      'Je suis un animal qui rampe par terre. Qui suis-je ?'
+    ] },
+
+  { id: 'e-colombe', theme: 'Animal', reponse: 'La colombe', accepte: ['colombe', 'pigeon'],
+    reference: 'Genèse 8:8-11 ; Matthieu 3:16',
+    indices: [
+      'Au baptême de Jésus, l’esprit de Dieu est descendu comme moi.',
+      'Noé m’a fait sortir de l’arche.',
+      'Je suis revenue avec une feuille d’olivier dans le bec. Qui suis-je ?'
+    ] },
+
+  { id: 'e-lion', theme: 'Animal', reponse: 'Le lion', accepte: ['lion', 'lions'],
+    reference: 'Juges 14:5, 6 ; 1 Samuel 17:34, 35 ; Daniel 6:22',
+    indices: [
+      'Samson en a tué un à mains nues.',
+      'David en a combattu un pour protéger ses moutons.',
+      'Daniel a passé une nuit avec nous dans une fosse. Qui sommes-nous ?'
+    ] },
+
+  { id: 'e-anesse', theme: 'Animal', reponse: 'L’ânesse', accepte: ['anesse', 'ane', 'l ane'],
+    reference: 'Nombres 22:22-28',
+    indices: [
+      'J’ai vu un ange au milieu du chemin.',
+      'Mon maître, Balaam, m’a frappée trois fois.',
+      'Jéhovah m’a fait parler comme un humain. Qui suis-je ?'
+    ] },
+
+  { id: 'e-poisson', theme: 'Animal', reponse: 'Le grand poisson', accepte: ['poisson', 'gros poisson'],
+    reference: 'Jonas 1:17 ; 2:10',
+    indices: [
+      'J’habite dans la mer.',
+      'J’ai avalé un prophète qui fuyait.',
+      'Jonas est resté trois jours dans mon ventre. Qui suis-je ?'
+    ] },
+
+  { id: 'e-corbeau', theme: 'Animal', reponse: 'Le corbeau', accepte: ['corbeau', 'corbeaux'],
+    reference: 'Genèse 8:7 ; 1 Rois 17:6',
+    indices: [
+      'Je suis un oiseau noir.',
+      'Noé m’a fait sortir de l’arche avant la colombe.',
+      'Avec d’autres oiseaux comme moi, j’ai apporté du pain et de la viande au prophète Élie. Qui suis-je ?'
+    ] },
+
+  /* ------------------------------------------------------------ objets --- */
+
+  { id: 'e-arche', theme: 'Objet', reponse: 'L’arche', accepte: ['arche', 'arche de noe', 'bateau'],
+    reference: 'Genèse 6:14-16 ; 7:1-9',
+    indices: [
+      'J’étais un immense bateau en bois.',
+      'Noé et sa famille m’ont construit.',
+      'Les animaux sont montés dans moi deux par deux. Qui suis-je ?'
+    ] },
+
+  { id: 'e-arc-en-ciel', theme: 'Objet', reponse: 'L’arc-en-ciel', accepte: ['arc en ciel'],
+    reference: 'Genèse 9:12-16',
+    indices: [
+      'J’ai plein de couleurs.',
+      'Je suis apparu dans le ciel après le déluge.',
+      'Je rappelle la promesse de Dieu : plus jamais de déluge sur toute la terre. Qui suis-je ?'
+    ] },
+
+  { id: 'e-manne', theme: 'Objet', reponse: 'La manne', accepte: ['manne'],
+    reference: 'Exode 16:14, 15, 31, 35',
+    indices: [
+      'Je tombais du ciel chaque matin.',
+      'J’avais le goût de gâteau au miel.',
+      'J’ai nourri les Israélites dans le désert. Qui suis-je ?'
+    ] },
+
+  { id: 'e-fronde', theme: 'Objet', reponse: 'La fronde', accepte: ['fronde', 'lance pierre'],
+    reference: '1 Samuel 17:40, 49',
+    indices: [
+      'Je sers à lancer des pierres très loin.',
+      'Les bergers m’utilisaient pour protéger leurs moutons.',
+      'David m’a utilisée contre Goliath. Qui suis-je ?'
+    ] },
+
+  { id: 'e-mangeoire', theme: 'Objet', reponse: 'La mangeoire', accepte: ['mangeoire', 'creche'],
+    reference: 'Luc 2:7, 12',
+    indices: [
+      'D’habitude, je sers à donner à manger aux animaux.',
+      'Marie y a couché son bébé.',
+      'Jésus nouveau-né a dormi dans moi. Qui suis-je ?'
+    ] },
+
+  /* ------------------------------------------------------------- lieux --- */
+
+  { id: 'e-eden', theme: 'Lieu', reponse: 'Le jardin d’Éden', accepte: ['eden', 'jardin d eden', 'paradis'],
+    reference: 'Genèse 2:8, 9, 15-17',
+    indices: [
+      'J’étais un magnifique jardin plein d’arbres et de fruits.',
+      'Adam et Ève y habitaient.',
+      'Il y avait un arbre dont il ne fallait pas manger le fruit. Qui suis-je ?'
+    ] },
+
+  { id: 'e-mer-rouge', theme: 'Lieu', reponse: 'La mer Rouge', accepte: ['mer rouge'],
+    reference: 'Exode 14:21, 22',
+    indices: [
+      'Moïse a tendu sa main au-dessus de moi.',
+      'Mes eaux se sont écartées comme deux murs.',
+      'Les Israélites ont marché au milieu de moi, à pied sec. Qui suis-je ?'
+    ] },
+
+  { id: 'e-jericho', theme: 'Lieu', reponse: 'Jéricho', accepte: [],
+    reference: 'Josué 6:3-5, 20',
+    indices: [
+      'J’étais une ville entourée de grandes murailles.',
+      'Les Israélites ont fait le tour de moi pendant sept jours.',
+      'Ils ont sonné du cor et crié, et mes murailles sont tombées. Qui suis-je ?'
+    ] },
+
+  { id: 'e-bethleem', theme: 'Lieu', reponse: 'Bethléem', accepte: [],
+    reference: '1 Samuel 17:12 ; Luc 2:4-7',
+    indices: [
+      'Je suis une petite ville.',
+      'Le roi David est né chez moi.',
+      'Jésus aussi est né chez moi. Qui suis-je ?'
+    ] },
+
+  /* ------------------------------------------------------------ métiers --- */
+
+  { id: 'e-berger', theme: 'Métier', reponse: 'Berger', accepte: ['bergere'],
+    reference: '1 Samuel 16:11 ; Jean 10:11',
+    indices: [
+      'Je garde des moutons.',
+      'David faisait ce travail quand il était jeune.',
+      'Jésus a dit : « Je suis le bon… » Quel est ce métier ?'
+    ] },
+
+  { id: 'e-charpentier', theme: 'Métier', reponse: 'Charpentier', accepte: [],
+    reference: 'Matthieu 13:55 ; Marc 6:3',
+    indices: [
+      'Je travaille le bois.',
+      'Joseph, le mari de Marie, faisait ce métier.',
+      'Jésus aussi a appris ce métier. Quel est ce métier ?'
+    ] },
+
+  { id: 'e-pecheur', theme: 'Métier', reponse: 'Pêcheur', accepte: ['pecheurs'],
+    reference: 'Matthieu 4:18, 19',
+    indices: [
+      'J’utilise des filets et un bateau.',
+      'Pierre et André faisaient ce métier.',
+      'Jésus leur a dit : « Je ferai de vous des … d’hommes. » Quel est ce métier ?'
+    ] },
+
+  /* ------------------------------------------------------------ nombres --- */
+
+  { id: 'e-deux', theme: 'Nombre', reponse: 'Deux', accepte: ['2'],
+    reference: 'Jean 6:9-11',
+    indices: [
+      'Un petit garçon avait apporté cinq pains.',
+      'Jésus s’en est servi pour nourrir une foule immense.',
+      'Combien de poissons ce garçon avait-il ?'
+    ] },
+
+  { id: 'e-dix', theme: 'Nombre', reponse: 'Dix', accepte: ['10'],
+    reference: 'Exode 34:28',
+    indices: [
+      'Moïse est descendu de la montagne avec des tablettes de pierre.',
+      'Dessus, Jéhovah avait écrit ses commandements.',
+      'Combien y avait-il de commandements ?'
+    ] },
+
+  { id: 'e-douze', theme: 'Nombre', reponse: 'Douze', accepte: ['12'],
+    reference: 'Matthieu 10:1-4',
+    indices: [
+      'C’est un de plus que onze.',
+      'Jacob avait ce nombre de fils.',
+      'Combien Jésus avait-il d’apôtres ?'
+    ] },
+
+  { id: 'e-trois', theme: 'Nombre', reponse: 'Trois', accepte: ['3'],
+    reference: 'Jonas 1:17',
+    indices: [
+      'Jonas a été avalé par un grand poisson.',
+      'Il a prié Jéhovah dans le ventre du poisson.',
+      'Combien de jours est-il resté dans le poisson ?'
+    ] }
+];

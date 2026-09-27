@@ -51,35 +51,39 @@ const Reponse = (() => {
     return ligne[b.length];
   }
 
-  /** Fautes tolérées selon la longueur du mot attendu. */
-  function tolerance(attendu) {
+  /**
+   * Fautes tolérées selon la longueur du mot attendu. Les enfants écrivent
+   * comme ils entendent (« Jonnas », « Goliat ») : une faute de plus.
+   */
+  function tolerance(attendu, indulgent) {
     if (/^\d+$/.test(attendu)) return 0;
-    if (attendu.length >= 9) return 2;
-    if (attendu.length >= 5) return 1;
-    return 0;
+    const bonus = indulgent && attendu.length >= 4 ? 1 : 0;
+    if (attendu.length >= 9) return 2 + bonus;
+    if (attendu.length >= 5) return 1 + bonus;
+    return bonus;
   }
 
-  function proche(saisie, attendu) {
+  function proche(saisie, attendu, indulgent) {
     if (!saisie || !attendu) return false;
     if (saisie === attendu) return true;
-    if (distance(saisie, attendu) <= tolerance(attendu)) return true;
+    if (distance(saisie, attendu) <= tolerance(attendu, indulgent)) return true;
     // « c'est Moïse », « Moïse le prophète » : la bonne réponse est dedans.
     const mots = saisie.split(' ');
     const cible = attendu.split(' ');
     if (mots.length > cible.length + 3) return false;
     for (let i = 0; i + cible.length <= mots.length; i++) {
       const morceau = mots.slice(i, i + cible.length).join(' ');
-      if (distance(morceau, attendu) <= tolerance(attendu)) return true;
+      if (distance(morceau, attendu) <= tolerance(attendu, indulgent)) return true;
     }
     return false;
   }
 
   /** La saisie correspond-elle à la réponse de la question ? */
-  function juste(saisie, question) {
+  function juste(saisie, question, indulgent) {
     const tape = normaliser(saisie);
     if (!tape) return false;
     return [question.reponse].concat(question.accepte || [])
-      .some(forme => proche(tape, normaliser(forme)));
+      .some(forme => proche(tape, normaliser(forme), indulgent));
   }
 
   return { juste, normaliser };
