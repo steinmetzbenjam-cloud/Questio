@@ -26,8 +26,30 @@ const Sortie = (() => {
   let principal = null;
   let niveau = 0.7;
 
+  /*
+   * Type de son demandé à l'iPhone (Safari 17 et plus). Pendant la dictée,
+   * iOS passe en mode « appel » (micro, son traité pour la voix) et n'en
+   * ressort pas toujours seul : la voix restait sourde après une réponse
+   * dictée. On redemande donc explicitement le mode « lecture » ensuite.
+   */
+  function typeSession(type) {
+    try {
+      if (navigator.audioSession) navigator.audioSession.type = type;
+    } catch (e) { /* navigateur sans cette possibilité */ }
+  }
+
+  function modeLecture() {
+    typeSession('playback');
+    reveiller();
+  }
+
+  function modeEnregistrement() {
+    typeSession('play-and-record');
+  }
+
   /** Crée le moteur (à faire pendant un toucher : iOS l'exige). */
   function preparer() {
+    typeSession('playback');
     if (contexte) return contexte;
     try {
       contexte = new (window.AudioContext || window.webkitAudioContext)();
@@ -100,7 +122,7 @@ const Sortie = (() => {
   }
 
   return {
-    preparer, reveiller, pret, actif, regler,
+    preparer, reveiller, pret, actif, regler, modeLecture, modeEnregistrement,
     niveau: () => niveau,
     contexte: () => contexte,
     entree: () => principal
@@ -420,8 +442,14 @@ const Dictee = (() => {
    *                            d'abord (vide si rien n'a été compris) ;
    *   erreur(message)        — la dictée n'a pas pu fonctionner.
    */
+  /** Fin de dictée : retour au son normal, un instant après l'arrêt du micro. */
+  function rendreLeSon() {
+    setTimeout(() => Sortie.modeLecture(), 150);
+  }
+
   function ecouter(reglages) {
     arreter();
+    Sortie.modeEnregistrement();
     const r = new Reconnaissance();
     r.lang = 'fr-FR';
     r.interimResults = true;
@@ -434,6 +462,7 @@ const Dictee = (() => {
       if (fini) return;
       fini = true;
       if (enCours === r) enCours = null;
+      rendreLeSon();
       reglages.fin(propositions);
     };
 
@@ -448,6 +477,7 @@ const Dictee = (() => {
       if (fini) return;
       fini = true;
       if (enCours === r) enCours = null;
+      rendreLeSon();
       const refus = ev.error === 'not-allowed' || ev.error === 'service-not-allowed';
       reglages.erreur(refus
         ? 'Micro refusé. Autorisez le micro pour ce site, ou utilisez le micro du clavier.'
@@ -470,6 +500,7 @@ const Dictee = (() => {
     enCours = null;
     r.onresult = r.onerror = r.onend = null;
     try { r.abort(); } catch (e) { /* déjà arrêtée */ }
+    rendreLeSon();
   }
 
   return { disponible, ecouter, arreter };
