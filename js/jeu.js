@@ -509,7 +509,16 @@ const Jeu = (() => {
     vue.jauge.hidden = true;
     dessinerScores();
     dessinerTexte();
-    lire();
+    if (partie.rang > 0) {
+      lire();
+      return;
+    }
+    // Première question : un court temps pour que le son du téléphone se
+    // stabilise après le lancement (sinon le début de la lecture est bas).
+    const jeton = partie.jeton;
+    setTimeout(() => {
+      if (partie && partie.rang === 0 && partie.jeton === jeton && partie.phase === 'lecture') lire();
+    }, 800);
   }
 
   /* — lecture — */

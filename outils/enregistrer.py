@@ -77,15 +77,21 @@ def phrases(contenu):
     return voulu
 
 
+# Silence en tête de chaque enregistrement : l'iPhone monte le son en fondu au
+# début d'une lecture, et ce fondu mangeait les premières syllabes.
+SILENCE_INITIAL = '[[slnc 300]] '
+FORMAT = 'v2-silence-300'  # changer cette valeur fait tout réenregistrer
+
+
 def empreinte(texte, voix):
-    return hashlib.sha1(f'{voix}\n{texte}'.encode('utf-8')).hexdigest()[:16]
+    return hashlib.sha1(f'{FORMAT}\n{voix}\n{texte}'.encode('utf-8')).hexdigest()[:16]
 
 
 def enregistrer(nom, texte, voix):
     cible = os.path.join(DOSSIER, nom + '.m4a')
     with tempfile.TemporaryDirectory() as tmp:
         brut = os.path.join(tmp, 'brut.aiff')
-        subprocess.run(['say', '-v', voix, '-o', brut, texte], check=True)
+        subprocess.run(['say', '-v', voix, '-o', brut, SILENCE_INITIAL + texte], check=True)
         # AAC 16 kHz, 24 kbit/s : une voix nette, environ 4 Ko par seconde.
         subprocess.run(['afconvert', '-f', 'm4af', '-d', 'aac@16000', '-b', '24000',
                         brut, cible], check=True)

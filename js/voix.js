@@ -154,7 +154,10 @@ const Voix = (() => {
       const essai = lecteur.play();
       if (essai) essai.catch(() => {});
     } catch (e) { /* pas de lecteur audio */ }
-    if (!synthese) return;
+    // Avec la voix enregistrée, on ne réveille pas la voix du téléphone :
+    // pendant qu'elle parle, même un silence, iOS baisse le son des autres
+    // lectures, et Audrey démarrait trop bas.
+    if (!synthese || enregistree()) return;
     const vide = new SpeechSynthesisUtterance(' ');
     vide.volume = 0;
     synthese.speak(vide);
