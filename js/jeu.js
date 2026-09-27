@@ -135,7 +135,7 @@ const Jeu = (() => {
     };
 
     const choixPublic = el('div.choix');
-    for (const [valeur, libelle] of [['adultes', 'Adultes'], ['enfants', 'Enfants (5-10 ans)']]) {
+    for (const [valeur, libelle] of [['adultes', 'Adultes'], ['enfants', 'Enfant']]) {
       choixPublic.appendChild(el('button.choix__bouton' + (valeur === reglages.public ? '.choix__bouton--actif' : ''), {
         type: 'button', texte: libelle,
         onclick: ev => {
